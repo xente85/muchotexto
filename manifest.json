@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Mucho texto",
+  "description": "Extensión de chrome para hacer un resumen de un texto o enlace seleccionado",
+  "version": "1.0.0",
+  "host_permissions": ["https://*.openai.com/"],
+  "permissions": ["storage", "tabs", "contextMenus"],
+  "icons": {
+    "512": "assets/icons/icon.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "css": ["style.css"],
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content.js"]
+    }
+  ]
+}
