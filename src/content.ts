@@ -44,12 +44,16 @@ function openModal(resumen: string) {
   modal.style.display = "block";
 }
 
+function openModalError(error: string) {
+  openModal(error);
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function procesarRespuestaGPT(answer: any) {
+async function procesarRespuestaGPT(answer: string) {
   switch (answer) {
     case "ERROR": {
-      openModal(
+      openModalError(
         'You need to once visit <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a> and check if the connection is secure. Redirecting...'
       );
       await sleep(3000);
@@ -57,30 +61,34 @@ async function procesarRespuestaGPT(answer: any) {
       break;
     }
     case "CLOUDFLARE": {
-      openModal(
+      openModalError(
         'Something went wrong. Are you logged in to <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a>? Try logging out and logging in again.'
       );
       break;
     }
     default: {
       try {
-        let res = await answer.split("data:");
+        const res = await answer.split("data:");
         try {
           const detail = JSON.parse(res[0]).detail;
           openModal(detail);
           return;
         } catch (e) {
           try {
-            res = res[1].trim();
-            if (res === "[DONE]") return;
-            answer = JSON.parse(res);
-            let final = answer.message.content.parts[0];
+            const resTrim = res[1].trim();
+            if (resTrim === "[DONE]") return;
+            const answerJson = JSON.parse(resTrim);
+            let final = answerJson.message.content.parts[0];
             final = final.replace(/\n/g, "<br>");
             openModal(final);
-          } catch (e) {}
+          } catch (e) {
+            // openModalError(`Error: ${e}`);
+          }
         }
       } catch (e) {
-        openModal("Something went wrong. Please try in a few minutes.");
+        openModalError(
+          `Something went wrong. Please try in a few minutes. (${e})`
+        );
       }
       break;
     }
@@ -89,7 +97,7 @@ async function procesarRespuestaGPT(answer: any) {
 
 function launchModalLink(data: any) {
   if (data.error) {
-    openModal(data.error);
+    openModalError(data.error);
     return;
   }
   const jsonArticle = {

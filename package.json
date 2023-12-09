@@ -26,7 +26,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "compile": "npx tsc",
-    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'src' --exclude 'dist' --exclude 'node_modules' --exclude 'package.json' --exclude 'package-lock.json' --exclude '.eslintrc' --exclude '.eslintignore' ./ dist/",
+    "copy-assets": "rsync -av --exclude '.editor*' --exclude '.git*' --exclude 'tsconfig.json' --exclude 'src' --exclude 'dist' --exclude 'node_modules' --exclude 'package*' --exclude '.eslintrc' --exclude '.eslintignore' ./ dist/",
     "lint": "eslint src --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
     "build": "npm run clean && npm run compile && npm run copy-assets"
