@@ -43,5 +43,8 @@
   },
   "uiLoading": {
     "message": "Loading..."
+  },
+  "uiInstruction": {
+    "message": "Right-click on the selected text or a link to get a summary or translation"
   }
 }

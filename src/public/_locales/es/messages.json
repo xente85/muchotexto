@@ -43,5 +43,8 @@
   },
   "uiLoading": {
     "message": "Cargando..."
+  },
+  "uiInstruction": {
+    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción"
   }
 }
