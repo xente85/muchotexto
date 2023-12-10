@@ -3,17 +3,18 @@ import { prompts } from "./utils/prompt";
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
-    title: "Resume artículo",
+    // title: chrome.i18n.getMessage("menuLink"),
+    title: chrome.i18n.getMessage("menuLink"),
     contexts: ["link"],
     id: "link",
   });
   chrome.contextMenus.create({
-    title: "Resume texto",
+    title: chrome.i18n.getMessage("menuSelection"),
     contexts: ["selection"],
     id: "selection",
   });
   chrome.contextMenus.create({
-    title: "Traduce texto",
+    title: chrome.i18n.getMessage("menuSelectionTraslate"),
     contexts: ["selection"],
     id: "selectionTranslate",
   });
@@ -64,9 +65,9 @@ async function processStreamResponse(
           // no se hacer nada
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       sendTabMessageError(tabId, {
-        error: `Something went wrong. Please try in a few minutes. ${e}`,
+        error: chrome.i18n.getMessage("errorTemporal", [e]),
       });
     }
   }

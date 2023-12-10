@@ -1,0 +1,47 @@
+{
+  "extensionName": {
+    "message": "Mucho Texto"
+  },
+  "extensionDescription": {
+    "message": "Chrome extension for translating, summarizing selected text or link with the assistance of ChatGPT."
+  },
+  "menuSelection": {
+    "message": "Summarize Selection"
+  },
+  "menuSelectionTraslate": {
+    "message": "Translate Selection"
+  },
+  "menuLink": {
+    "message": "Summarize Content"
+  },
+  "promptSelection": {
+    "message": "Summarize this text in no more than 200 words: '''$1'''"
+  },
+  "promptLink": {
+    "message": "I want you to summarize this news in no more than 200 words. Focus on what the headline refers to and avoid clickbait: '''$1'''"
+  },
+  "promptTranslate": {
+    "message": "Translate this text: '''$1'''"
+  },
+  "errorTemporal": {
+    "message": "Something went wrong. Please try again in a few minutes: $1"
+  },
+  "errorReset": {
+    "message": "Something went wrong. Are you connected to <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a>? Try logging out and logging in again."
+  },
+  "errorLogin": {
+    "message": "You need to visit <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a> once and check if the connection is secure. Redirecting..."
+  },
+  "errorPromptLink": {
+    "message": "Type \"$1\" without event.linkUrl"
+  },
+  "errorPromptSelection": {
+    "message": "Type \"$1\" without event.selectionText"
+  },
+  "errorPromptUnkown": {
+    "message": "Unknown type \"$1\""
+  },
+  "uiLoading": {
+    "message": "Loading..."
+  }
+}

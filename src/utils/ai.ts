@@ -11,13 +11,9 @@ export class AI {
         resolve(res.body);
       } catch (e) {
         if (e === "CLOUDFLARE") {
-          reject(
-            'Something went wrong. Are you logged in to <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a>? Try logging out and logging in again.'
-          );
+          reject(chrome.i18n.getMessage("errorReset"));
         } else {
-          reject(
-            'You need to once visit <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a> and check if the connection is secure. Redirecting...'
-          );
+          reject(chrome.i18n.getMessage("errorLogin"));
           await sleep(3000);
           chrome.tabs.create({ url: "https://chat.openai.com/chat" });
         }

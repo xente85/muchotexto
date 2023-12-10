@@ -31,7 +31,7 @@ export class UI {
   }
 
   private loading() {
-    this.elementContentText.textContent = "Loading...";
+    this.elementContentText.textContent = chrome.i18n.getMessage("uiLoading");
   }
 
   private createListeners() {

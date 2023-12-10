@@ -11,7 +11,7 @@ export class prompts {
               const article = await getArticle(event.linkUrl);
               resolve(prompts.promptLink(article));
             } else {
-              reject(`Tipo "link" sin event.linkUrl`);
+              reject(chrome.i18n.getMessage("errorPromptLink", [menuItemId]));
             }
             break;
           }
@@ -19,7 +19,9 @@ export class prompts {
             if (event.selectionText) {
               resolve(prompts.promptSelection(event.selectionText));
             } else {
-              reject(`Tipo "selection" sin event.selectionText`);
+              reject(
+                chrome.i18n.getMessage("errorPromptSelection", [menuItemId])
+              );
             }
             break;
           }
@@ -27,12 +29,18 @@ export class prompts {
             if (event.selectionText) {
               resolve(prompts.promptSelectionTranslate(event.selectionText));
             } else {
-              reject(`Tipo "selectionTranslate" sin event.selectionText`);
+              reject(
+                chrome.i18n.getMessage("errorPromptSelection", [menuItemId])
+              );
             }
             break;
           }
           default: {
-            reject(`Tipo ${menuItemId} desconocido`);
+            reject(
+              chrome.i18n.getMessage("errorPromptUnkown", [
+                menuItemId.toString(),
+              ])
+            );
             break;
           }
         }
@@ -47,30 +55,14 @@ export class prompts {
       titular: data.title,
       noticia: data.description,
     };
-
-    const prompt = `
-      Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular: "${JSON.stringify(
-        jsonArticle
-      )}"
-    `;
-
-    /*
-    const prompt = `
-      Quiero que me hagas un resumen de puntos clave en forma de lista. Pon el foco a lo que se refiere el titular: "${JSON.stringify(
-        jsonArticle
-      )}"
-    `;
-    */
-
-    return prompt;
+    return chrome.i18n.getMessage("promptLink", [JSON.stringify(jsonArticle)]);
   }
 
   static promptSelection(textoSeleccionado: string) {
-    return `Resúme este texto a no mas de 200 palabras "${textoSeleccionado}"`;
+    return chrome.i18n.getMessage("promptSelection", [textoSeleccionado]);
   }
 
   static promptSelectionTranslate(textoSeleccionado: string) {
-    // return `Traduce este texto y explicame brevemente cosas a tener en cuenta para un B1: "${textoSeleccionado}"`;
-    return `Traduce este texto: "${textoSeleccionado}"`;
+    return chrome.i18n.getMessage("promptTranslate", [textoSeleccionado]);
   }
 }
