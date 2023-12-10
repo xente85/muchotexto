@@ -1,96 +1,28 @@
 import { sleep } from "./utils";
 
 export class AI {
-  static getPromptByType(type: string, data: any): Promise<string> {
-    return new Promise((resolve, reject) => {
-      switch (type) {
-        case "link": {
-          if (data.error) {
-            reject(data.error);
-            break;
-          }
-          resolve(AI.promptLink(data));
-          break;
-        }
-        case "selection": {
-          resolve(AI.promptSelection(data));
-          break;
-        }
-        default: {
-          reject("Tipo desconocido");
-          break;
-        }
-      }
-    });
-  }
-
-  static processResponse(answer: string): Promise<string> {
+  static requestInfo(question: string) {
     return new Promise(async (resolve, reject) => {
       try {
-        switch (answer) {
-          case "ERROR": {
-            reject(
-              'You need to once visit <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a> and check if the connection is secure. Redirecting...'
-            );
-            await sleep(3000);
-            chrome.tabs.create({ url: "https://chat.openai.com/chat" });
-            break;
-          }
-          case "CLOUDFLARE": {
-            reject(
-              'Something went wrong. Are you logged in to <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a>? Try logging out and logging in again.'
-            );
-            break;
-          }
-          default: {
-            try {
-              const res = await answer.split("data:");
-              try {
-                const detail = JSON.parse(res[0]).detail;
-                resolve(detail);
-              } catch (e) {
-                try {
-                  const resTrim = res[1].trim();
-                  if (resTrim === "[DONE]") return;
-                  const answerJson = JSON.parse(resTrim);
-                  let final = answerJson.message.content.parts[0];
-                  final = final.replace(/\n/g, "<br>");
-                  resolve(final);
-                } catch (e) {
-                  // reject(`Error: ${e}`);
-                }
-              }
-            } catch (e) {
-              reject(
-                `Something went wrong. Please try in a few minutes. (${e})`
-              );
-            }
-            break;
-          }
+        const res = await fetch(
+          "https://chat.openai.com/backend-api/conversation",
+          await AI.getFetchInfo(question)
+        );
+        resolve(res.body);
+      } catch (e) {
+        if (e === "CLOUDFLARE") {
+          reject(
+            'Something went wrong. Are you logged in to <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a>? Try logging out and logging in again.'
+          );
+        } else {
+          reject(
+            'You need to once visit <a target="_blank" href="https://chat.openai.com/chat">chat.openai.com</a> and check if the connection is secure. Redirecting...'
+          );
+          await sleep(3000);
+          chrome.tabs.create({ url: "https://chat.openai.com/chat" });
         }
-      } catch (error) {
-        reject(`Something went wrong. Please try in a few minutes. (${error})`);
       }
     });
-  }
-
-  static promptLink(data: any) {
-    const jsonArticle = {
-      titular: data.title,
-      noticia: data.description,
-    };
-
-    const prompt = `
-      Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular: "${JSON.stringify(
-        jsonArticle
-      )}"
-    `;
-
-    return prompt;
-  }
-
-  static promptSelection(textoSeleccionado: string) {
-    return `Resúme este texto a no mas de 200 palabras "${textoSeleccionado}"`;
   }
 
   static uid() {
@@ -151,43 +83,29 @@ export class AI {
     });
   }
 
-  static getResponse(question: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const accessToken = await AI.getToken();
-        const res = await fetch(
-          "https://chat.openai.com/backend-api/conversation",
+  static async getFetchInfo(question: string) {
+    const accessToken = await AI.getToken();
+    return {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + accessToken,
+      },
+      body: JSON.stringify({
+        action: "next",
+        messages: [
           {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + accessToken,
+            id: AI.uid(),
+            role: "user",
+            content: {
+              content_type: "text",
+              parts: [question],
             },
-            body: JSON.stringify({
-              action: "next",
-              messages: [
-                {
-                  id: AI.uid(),
-                  role: "user",
-                  content: {
-                    content_type: "text",
-                    parts: [question],
-                  },
-                },
-              ],
-              model: "text-davinci-002-render",
-              parent_message_id: AI.uid(),
-            }),
-          }
-        );
-        resolve(res.body);
-      } catch (e) {
-        if (e === "CLOUDFLARE") {
-          reject("CLOUDFLARE");
-        } else {
-          reject("ERROR");
-        }
-      }
-    });
+          },
+        ],
+        model: "text-davinci-002-render",
+        parent_message_id: AI.uid(),
+      }),
+    };
   }
 }

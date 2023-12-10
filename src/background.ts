@@ -1,5 +1,5 @@
-import { getArticle } from "./utils/utils";
 import { AI } from "./utils/ai";
+import { prompts } from "./utils/prompt";
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
@@ -17,39 +17,60 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.contextMenus.onClicked.addListener((event) => {
   chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
     if (tabs.length > 0 && tabs[0].id) {
-      const { menuItemId } = event;
       chrome.tabs.sendMessage(tabs[0].id, { type: "loading" });
+      try {
+        const prompt = await prompts.getPrompt(event);
+        const response = await AI.requestInfo(prompt);
 
-      let data = null;
-      if (menuItemId === "selection") {
-        data = event.selectionText;
-      } else if (menuItemId === "link" && event.linkUrl) {
-        data = await getArticle(event.linkUrl);
-      } else {
-        data = event;
-      }
-
-      chrome.tabs.sendMessage(tabs[0].id, { type: menuItemId, data });
-    }
-  });
-});
-
-// TODO: mejorar
-chrome.runtime.onConnect.addListener((port) => {
-  port.onMessage.addListener((msg) => {
-    const prompt = msg.prompt;
-    AI.getResponse(prompt)
-      .then(async (answer) => {
-        const resRead = (answer as ReadableStream<Uint8Array>).getReader();
+        const resRead = (response as ReadableStream<Uint8Array>).getReader();
         while (true) {
           const { done, value } = await resRead.read();
           if (done) break;
-          if (done === undefined || value === undefined)
-            port.postMessage("ERROR");
-          const data = new TextDecoder().decode(value);
-          port.postMessage(data);
+          if (done === undefined || value === undefined) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+              type: "error",
+              data: { error: "ERROR" },
+            });
+          }
+          const answer = new TextDecoder().decode(value);
+          try {
+            const res = await answer.split("data:");
+            try {
+              const detail = JSON.parse(res[0]).detail;
+              chrome.tabs.sendMessage(tabs[0].id, {
+                type: "text",
+                data: { text: detail },
+              });
+            } catch (e) {
+              try {
+                const resTrim = res[1].trim();
+                if (resTrim === "[DONE]") return;
+                const answerJson = JSON.parse(resTrim);
+                let final = answerJson.message.content.parts[0];
+                final = final.replace(/\n/g, "<br>");
+                chrome.tabs.sendMessage(tabs[0].id, {
+                  type: "text",
+                  data: { text: final },
+                });
+              } catch (e) {
+                // no se hacer nada
+              }
+            }
+          } catch (e) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+              type: "error",
+              data: {
+                error: `Something went wrong. Please try in a few minutes. ${e}`,
+              },
+            });
+          }
         }
-      })
-      .catch((e) => port.postMessage(e));
+      } catch (e) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: "error",
+          data: { error: e },
+        });
+      }
+    }
   });
 });
