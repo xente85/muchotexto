@@ -61,7 +61,8 @@ export class UI {
   }
 
   public openModalText(resumen: string) {
-    this.elementContentText.textContent = resumen;
+    // this.elementContentText.textContent = resumen;
+    this.elementContentText.innerHTML = resumen;
     this.openModal();
   }
 

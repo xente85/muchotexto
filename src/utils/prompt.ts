@@ -23,6 +23,14 @@ export class prompts {
             }
             break;
           }
+          case "selectionTranslate": {
+            if (event.selectionText) {
+              resolve(prompts.promptSelectionTranslate(event.selectionText));
+            } else {
+              reject(`Tipo "selectionTranslate" sin event.selectionText`);
+            }
+            break;
+          }
           default: {
             reject(`Tipo ${menuItemId} desconocido`);
             break;
@@ -46,10 +54,23 @@ export class prompts {
       )}"
     `;
 
+    /*
+    const prompt = `
+      Quiero que me hagas un resumen de puntos clave en forma de lista. Pon el foco a lo que se refiere el titular: "${JSON.stringify(
+        jsonArticle
+      )}"
+    `;
+    */
+
     return prompt;
   }
 
   static promptSelection(textoSeleccionado: string) {
     return `Resúme este texto a no mas de 200 palabras "${textoSeleccionado}"`;
+  }
+
+  static promptSelectionTranslate(textoSeleccionado: string) {
+    // return `Traduce este texto y explicame brevemente cosas a tener en cuenta para un B1: "${textoSeleccionado}"`;
+    return `Traduce este texto: "${textoSeleccionado}"`;
   }
 }

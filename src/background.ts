@@ -12,6 +12,11 @@ chrome.runtime.onInstalled.addListener(function () {
     contexts: ["selection"],
     id: "selection",
   });
+  chrome.contextMenus.create({
+    title: "Traduce texto",
+    contexts: ["selection"],
+    id: "selectionTranslate",
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((event) => {
