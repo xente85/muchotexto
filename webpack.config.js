@@ -2,7 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: 'development', // Configura el modo de desarrollo
+  mode: 'production', // Configura el modo de desarrollo
   devtool: 'inline-source-map', // Agrega source maps para la depuración
   entry: {
     content: './src/content.ts',

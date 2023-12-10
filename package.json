@@ -27,6 +27,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint src --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
+    "dev": "npm run clean && webpack --config webpack.config.js --mode development",
     "build": "npm run clean && webpack --config webpack.config.js"
   },
   "devDependencies": {
