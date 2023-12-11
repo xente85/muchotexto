@@ -51,11 +51,17 @@ async function getDataPrompt(
 ) {
   const { menuItemId } = event;
 
+  console.log("getDataPrompt", event);
+
   switch (menuItemId) {
     case "link": {
       if (!event.linkUrl)
         throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
 
+      sendTabMessageTitle(tabId, {
+        title: event.selectionText || event.linkUrl,
+        subtitle: chrome.i18n.getMessage("menuLink"),
+      });
       sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
 
       const article = await getArticle(event.linkUrl);
@@ -71,6 +77,11 @@ async function getDataPrompt(
       if (!event.selectionText)
         throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
 
+      sendTabMessageTitle(tabId, {
+        title: event.selectionText,
+        subtitle: chrome.i18n.getMessage("menuSelection"),
+      });
+
       sendTabMessageLoading(
         tabId,
         chrome.i18n.getMessage("uiLoadingSelectionSummary")
@@ -81,6 +92,11 @@ async function getDataPrompt(
     case "selectionTranslate": {
       if (!event.selectionText)
         throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
+
+      sendTabMessageTitle(tabId, {
+        title: event.selectionText,
+        subtitle: chrome.i18n.getMessage("menuSelectionTraslate"),
+      });
 
       sendTabMessageLoading(
         tabId,
@@ -111,7 +127,7 @@ async function processStreamResponse(
       const res = await answer.split("data:");
       try {
         const detail = JSON.parse(res[0]).detail;
-        sendTabMessage(tabId, "text", { text: detail });
+        sendTabMessageText(tabId, { text: detail });
       } catch (e) {
         try {
           const resTrim = res[1].trim();
@@ -119,7 +135,7 @@ async function processStreamResponse(
           const answerJson = JSON.parse(resTrim);
           let final = answerJson.message.content.parts[0];
           final = final.replace(/\n/g, "<br>");
-          sendTabMessage(tabId, "text", { text: final });
+          sendTabMessageText(tabId, { text: final });
         } catch (e) {
           // no se hacer nada
         }
@@ -140,6 +156,14 @@ function sendTabMessageLoading(
   text: string = chrome.i18n.getMessage("uiLoading")
 ) {
   sendTabMessage(tabId, "loading", { text });
+}
+
+function sendTabMessageTitle(tabId: number, data: any) {
+  sendTabMessage(tabId, "title", data);
+}
+
+function sendTabMessageText(tabId: number, data: any) {
+  sendTabMessage(tabId, "text", data);
 }
 
 function sendTabMessageError(tabId: number, data: any) {

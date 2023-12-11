@@ -5,6 +5,11 @@ const ui = new UI().mount();
 chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
 
+  if (type === "title") {
+    ui.openModalTitle(data.title, data.subtitle);
+    return;
+  }
+
   if (type === "loading") {
     ui.openModalLoading(data.text);
     return;

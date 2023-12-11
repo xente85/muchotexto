@@ -76,5 +76,24 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    .mt-modal-content-title {
+      h1 {
+        font-size: 1.3rem;
+        line-height: normal;
+        margin-top: 5px;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        line-height: normal;
+        margin-top: 5px;
+      }
+
+      .mt-content-logo {
+        width: 100px;
+        height: 100px;
+      }
+    }
   }
 }
