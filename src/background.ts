@@ -1,5 +1,6 @@
 import { AI } from "./utils/ai";
 import { prompts } from "./utils/prompt";
+import { getArticle } from "./utils/utils";
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
@@ -24,17 +25,75 @@ chrome.contextMenus.onClicked.addListener((event) => {
   chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
     if (tabs.length > 0 && tabs[0].id) {
       const tabId = tabs[0].id;
-      sendTabMessage(tabId, "loading");
-      try {
-        const prompt = await prompts.getPrompt(event);
-        const response = await AI.requestInfo(prompt);
-        processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
-      } catch (e) {
-        sendTabMessageError(tabId, { error: e });
-      }
+      onTabClick(tabId, event);
     }
   });
 });
+
+async function onTabClick(
+  tabId: number,
+  event: chrome.contextMenus.OnClickData
+) {
+  try {
+    const { type, data } = await getDataPrompt(tabId, event);
+    const prompt = await prompts.getPrompt(type, data);
+    const response = await AI.requestInfo(prompt);
+    processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
+    sendTabMessageActions(tabId, { type, data });
+  } catch (e) {
+    sendTabMessageError(tabId, { error: e });
+  }
+}
+
+async function getDataPrompt(
+  tabId: number,
+  event: chrome.contextMenus.OnClickData
+) {
+  const { menuItemId } = event;
+
+  switch (menuItemId) {
+    case "link": {
+      if (!event.linkUrl)
+        throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
+
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
+
+      const article = await getArticle(event.linkUrl);
+
+      sendTabMessageLoading(
+        tabId,
+        chrome.i18n.getMessage("uiLoadingArticleSummary")
+      );
+
+      return { type: "article", data: article };
+    }
+    case "selection": {
+      if (!event.selectionText)
+        throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
+
+      sendTabMessageLoading(
+        tabId,
+        chrome.i18n.getMessage("uiLoadingSelectionSummary")
+      );
+
+      return { type: "summarize", data: event.selectionText };
+    }
+    case "selectionTranslate": {
+      if (!event.selectionText)
+        throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
+
+      sendTabMessageLoading(
+        tabId,
+        chrome.i18n.getMessage("uiLoadingSelectionTraslate")
+      );
+
+      return { type: "translate", data: event.selectionText };
+    }
+    default: {
+      throw new Error(chrome.i18n.getMessage("errorPromptUnkown"));
+    }
+  }
+}
 
 async function processStreamResponse(
   response: ReadableStream<Uint8Array>,
@@ -76,7 +135,17 @@ async function processStreamResponse(
 function sendTabMessage(tabId: number, type: string, data: any = {}) {
   chrome.tabs.sendMessage(tabId, { type, data });
 }
+function sendTabMessageLoading(
+  tabId: number,
+  text: string = chrome.i18n.getMessage("uiLoading")
+) {
+  sendTabMessage(tabId, "loading", { text });
+}
 
 function sendTabMessageError(tabId: number, data: any) {
   sendTabMessage(tabId, "error", data);
+}
+
+function sendTabMessageActions(tabId: number, data: any) {
+  sendTabMessage(tabId, "actions", data);
 }

@@ -17,7 +17,7 @@
   "promptSelection": {
     "message": "Summarize this text in no more than 200 words: '''$1'''"
   },
-  "promptLink": {
+  "promptArticle": {
     "message": "I want you to summarize this news in no more than 200 words. Focus on what the headline refers to and avoid clickbait: '''$1'''"
   },
   "promptTranslate": {
@@ -32,7 +32,7 @@
   "errorLogin": {
     "message": "You need to visit <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a> once and check if the connection is secure. Redirecting..."
   },
-  "errorPromptLink": {
+  "errorPromptArticle": {
     "message": "Type \"$1\" without event.linkUrl"
   },
   "errorPromptSelection": {
@@ -44,7 +44,19 @@
   "uiLoading": {
     "message": "Loading..."
   },
+  "uiLoadingArticle": {
+    "message": "Reading article"
+  },
+  "uiLoadingArticleSummary": {
+      "message": "Summarizing article"
+  },
+  "uiLoadingSelectionSummary": {
+      "message": "Summarizing selected text"
+  },
+  "uiLoadingSelectionTraslate": {
+      "message": "Translating selected text"
+  },
   "uiInstruction": {
-    "message": "Right-click on the selected text or a link to get a summary or translation"
+    "message": "Right-click on the selected text or a link to get a summary or translation."
   }
 }

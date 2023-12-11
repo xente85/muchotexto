@@ -6,12 +6,17 @@ chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
 
   if (type === "loading") {
-    ui.openModalLoading();
+    ui.openModalLoading(data.text);
     return;
   }
 
   if (type === "error") {
     ui.openModalError(data.error);
+    return;
+  }
+
+  if (type === "actions") {
+    // ui.openModalActions(data.error);
     return;
   }
 

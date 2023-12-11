@@ -30,8 +30,8 @@ export class UI {
     return this;
   }
 
-  private loading() {
-    this.elementContentText.textContent = chrome.i18n.getMessage("uiLoading");
+  private loading(text: string) {
+    this.elementContentText.textContent = `${text}...`;
   }
 
   private createListeners() {
@@ -55,8 +55,8 @@ export class UI {
     this.element.style.display = "none";
   }
 
-  public openModalLoading() {
-    this.loading();
+  public openModalLoading(text: string) {
+    this.loading(text);
     this.openModal();
   }
 
@@ -78,8 +78,11 @@ export class UI {
   }
 
   private destroyListeners() {
-    this.elementContentCloseBtn.onclick = null;
-    window.onclick = null;
+    this.elementContentCloseBtn.removeEventListener(
+      "click",
+      this.handleCloseClick
+    );
+    window.removeEventListener("click", this.handleCloseClick);
   }
 
   public destroy() {

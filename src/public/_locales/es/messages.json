@@ -14,10 +14,10 @@
   "menuLink": {
     "message": "Resume el contenido"
   },
-  "promptSelection": {
+  "promptSummarize": {
     "message": "Resume este texto a no más de 200 palabras: '''$1'''"
   },
-  "promptLink": {
+  "promptArticle": {
     "message": "Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular y evitar el clickbait: '''$1'''"
   },
   "promptTranslate": {
@@ -32,7 +32,7 @@
   "errorLogin": {
     "message": "Necesitas visitar una vez <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a> y verificar si la conexión es segura. Redirigiendo..."
   },
-  "errorPromptLink": {
+  "errorPromptArticle": {
     "message": "Tipo \"$1\" sin event.linkUrl"
   },
   "errorPromptSelection": {
@@ -42,9 +42,21 @@
     "message": "Tipo \"$1\" desconocido"
   },
   "uiLoading": {
-    "message": "Cargando..."
+    "message": "Cargando"
+  },
+  "uiLoadingArticle": {
+    "message": "Leyendo artículo"
+  },
+  "uiLoadingArticleSummary": {
+    "message": "Resumiendo artículo"
+  },
+  "uiLoadingSelectionSummary": {
+    "message": "Resumiendo texto seleccionado"
+  },
+  "uiLoadingSelectionTraslate": {
+    "message": "Traduciendo texto seleccionado"
   },
   "uiInstruction": {
-    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción"
+    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción."
   }
 }
