@@ -59,12 +59,23 @@ async function getDataPrompt(
         throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
 
       sendTabMessageTitle(tabId, {
-        title: event.selectionText || event.linkUrl,
+        title: event.linkUrl,
         subtitle: chrome.i18n.getMessage("menuLink"),
+        isLink: true,
       });
+
       sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
 
       const article = await getArticle(event.linkUrl);
+
+      if (article === null) {
+        throw new Error(chrome.i18n.getMessage("errorArticulo"));
+      }
+
+      sendTabMessageTitle(tabId, {
+        title: article.title,
+        subtitle: chrome.i18n.getMessage("menuLink"),
+      });
 
       sendTabMessageLoading(
         tabId,

@@ -41,6 +41,9 @@
   "errorPromptUnkown": {
     "message": "Tipo \"$1\" desconocido"
   },
+  "errorArticulo": {
+    "message": "No se ha podido extraer la información del artículo"
+  },
   "uiLoading": {
     "message": "Cargando"
   },

@@ -41,6 +41,9 @@
   "errorPromptUnkown": {
     "message": "Unknown type \"$1\""
   },
+  "errorArticulo": {
+    "message": "The information from the article could not be extracted"
+  },
   "uiLoading": {
     "message": "Loading..."
   },

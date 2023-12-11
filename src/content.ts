@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
 
   if (type === "title") {
-    ui.openModalTitle(data.title, data.subtitle);
+    ui.openModalTitle(data.title, data.subtitle, data.isLink);
     return;
   }
 
@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   }
 
   if (type === "actions") {
-    // ui.openModalActions(data.error);
+    // ui.openModalActions(data);
     return;
   }
 

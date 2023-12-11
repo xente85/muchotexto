@@ -1,47 +1,42 @@
 export class UI {
   private element: HTMLElement;
-  private elementContent: HTMLElement;
-  private elementContentCloseBtn: HTMLElement;
-  private elementContentTitle: HTMLElement;
-  private elementContentSubTitle: HTMLElement;
-  private elementContentText: HTMLElement;
-  private elementContentActions: HTMLElement;
+  private prefixCSS: string;
 
-  constructor() {
+  constructor(prefixCSS = "mt") {
     this.element = document.createElement("div");
-    this.elementContent = document.createElement("div");
-    this.elementContentCloseBtn = document.createElement("span");
-    this.elementContentTitle = document.createElement("h1");
-    this.elementContentSubTitle = document.createElement("h2");
-    this.elementContentText = document.createElement("p");
-    this.elementContentActions = document.createElement("div");
+    this.prefixCSS = prefixCSS;
   }
 
   public mount() {
-    this.element.id = "mt-modal";
-    this.element.className = "mt-modal";
+    this.element.id = `${this.prefixCSS}-modal`;
+    this.element.classList.add(`${this.prefixCSS}-modal`);
 
-    this.elementContent.className = `${this.element.className}-content`;
-    this.elementContentCloseBtn.className = `${this.elementContent.className}-close`;
-    this.elementContentCloseBtn.innerHTML = "&times;";
-
-    const titleContainer = document.createElement("div");
-    titleContainer.className = `${this.element.className}-content-title`;
-    const logo = document.createElement("img");
-    logo.className = `${this.element.className}-content-logo`;
-    logo.src = "assets/icons/icon.png";
-    logo.alt = "Mucho texto";
-    titleContainer.appendChild(logo);
-
-    const titleWrapper = document.createElement("div");
-    titleWrapper.appendChild(this.elementContentSubTitle);
-    titleWrapper.appendChild(this.elementContentTitle);
-    titleContainer.appendChild(titleWrapper);
-
-    this.elementContent.appendChild(this.elementContentCloseBtn);
-    this.elementContent.appendChild(titleContainer);
-    this.elementContent.appendChild(this.elementContentText);
-    this.element.appendChild(this.elementContent);
+    this.element.innerHTML = `
+      <div class="${this.prefixCSS}-modal-content">
+        <span class="${this.prefixCSS}-modal-content-close">×</span>
+        <div class="${this.prefixCSS}-modal-content-header">
+          <img class="${
+            this.prefixCSS
+          }-modal-content-header-logo" src="${chrome.runtime.getURL(
+      "assets/icons/icon.png"
+    )}" alt="Mucho texto">
+          <div>
+            <h2 class="${this.prefixCSS}-modal-content-header-subtitle"></h2>
+            <h1 class="${this.prefixCSS}-modal-content-header-title"></h1>
+          </div>
+        </div>
+        <div class="${this.prefixCSS}-modal-content-main">
+          <div class="${this.prefixCSS}-modal-content-loading">
+            <div class="${this.prefixCSS}-modal-content-loading-loader">
+              <div class="loader"></div>
+            </div>
+            <p class="${this.prefixCSS}-modal-content-loading-text"></p>
+          </div>
+          <div class="${this.prefixCSS}-modal-content-result">
+            <p class="${this.prefixCSS}-modal-content-result-text"></p>
+          </div>
+        </div>
+      </div>`;
 
     this.createListeners();
 
@@ -50,17 +45,32 @@ export class UI {
     return this;
   }
 
-  private loading(text: string) {
-    this.elementContentText.textContent = `${text}...`;
+  private showLoading(text: string) {
+    this.getElementContentLoading().classList.remove(
+      `${this.prefixCSS}-modal-hide`
+    );
+    this.getElementContentLoadingText().textContent = text;
   }
 
-  private createListeners() {
-    this.elementContentCloseBtn.addEventListener(
-      "click",
-      this.handleCloseClick
+  private closeLoading() {
+    this.getElementContentLoading().classList.remove(
+      `${this.prefixCSS}-modal-visible`
     );
+    this.getElementContentLoadingText().textContent = "";
+  }
 
-    window.addEventListener("click", this.handleCloseClick);
+  private showResult(text: string) {
+    this.getElementContentResult().classList.remove(
+      `${this.prefixCSS}-modal-hide`
+    );
+    this.getElementContentResultText().textContent = text;
+  }
+
+  private closeResult() {
+    this.getElementContentResult().classList.remove(
+      `${this.prefixCSS}-modal-visible`
+    );
+    this.getElementContentResultText().textContent = "";
   }
 
   private handleCloseClick = () => {
@@ -68,27 +78,39 @@ export class UI {
   };
 
   private openModal() {
-    this.element.style.display = "block";
+    this.element.classList.remove("mt-modal-hide");
+    this.element.classList.add("mt-modal-visible");
   }
 
   private closeModal() {
-    this.element.style.display = "none";
+    this.element.classList.remove("mt-modal-visible");
+    this.element.classList.add("mt-modal-hide");
   }
 
-  public openModalTitle(title: string = "", subtitle: string = "") {
-    this.elementContentTitle.innerHTML = title;
-    this.elementContentSubTitle.innerHTML = subtitle;
+  public openModalTitle(
+    title: string = "",
+    subtitle: string = "",
+    isLink = ""
+  ) {
+    this.getElementContentTitle().innerHTML = title;
+    this.getElementContentSubTitle().innerHTML = subtitle;
+
+    if (isLink) this.getElementContentTitle().classList.add("link");
+    else this.getElementContentTitle().classList.remove("link");
+
     this.openModal();
   }
 
   public openModalLoading(text: string) {
-    this.loading(text);
+    this.closeResult();
+    this.showLoading(text);
     this.openModal();
   }
 
   public openModalText(resumen: string) {
-    // this.elementContentText.textContent = resumen;
-    this.elementContentText.innerHTML = resumen;
+    this.closeLoading();
+    this.showResult(resumen);
+    this.getElementContentResultText().innerHTML = resumen;
     this.openModal();
   }
 
@@ -103,15 +125,66 @@ export class UI {
       this.element.parentNode.removeChild(this.element);
   }
 
-  private destroyListeners() {
-    this.elementContentCloseBtn.removeEventListener(
+  private createListeners() {
+    this.getElementContentCloseBtn().addEventListener(
       "click",
       this.handleCloseClick
     );
-    window.removeEventListener("click", this.handleCloseClick);
+
+    // window.addEventListener("click", this.handleCloseClick);
+  }
+
+  private destroyListeners() {
+    this.getElementContentCloseBtn().removeEventListener(
+      "click",
+      this.handleCloseClick
+    );
+    // window.removeEventListener("click", this.handleCloseClick);
   }
 
   public destroy() {
     this.unmount();
+  }
+
+  private getElementContentCloseBtn() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-close`
+    )[0];
+  }
+
+  private getElementContentLoading() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-loading`
+    )[0];
+  }
+
+  private getElementContentLoadingText() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-loading-text`
+    )[0];
+  }
+
+  private getElementContentTitle() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-header-title`
+    )[0];
+  }
+
+  private getElementContentSubTitle() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-header-subtitle`
+    )[0];
+  }
+
+  private getElementContentResult() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-result`
+    )[0];
+  }
+
+  private getElementContentResultText() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-result-text`
+    )[0];
   }
 }

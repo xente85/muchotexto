@@ -35,6 +35,14 @@
   }
 }
 
+.mt-modal-visible {
+  display: block !important;
+}
+
+.mt-modal-hide {
+  display: none !important;
+}
+
 /* The Modal (background) */
 .mt-modal {
   font-family: var(--mt-font-family);
@@ -52,7 +60,6 @@
   background-color: rgb(0, 0, 0); /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 
-  /* Modal Content/Box */
   .mt-modal-content {
     background-color: var(--mt-bg-color);
     margin: 15% auto; /* 15% from the top and centered */
@@ -77,22 +84,110 @@
       cursor: pointer;
     }
 
-    .mt-modal-content-title {
-      h1 {
+    .mt-modal-content-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+
+      .mt-modal-content-header-title {
         font-size: 1.3rem;
         line-height: normal;
         margin-top: 5px;
+
+        &.link {
+          white-space: nowrap; /* Evita el desbordamiento de línea */
+          overflow: hidden; /* Oculta el texto que no cabe */
+          text-overflow: ellipsis; /* Muestra puntos suspensivos (...) al final del texto truncado */
+        }
       }
 
-      h2 {
-        font-size: 1.1rem;
+      .mt-modal-content-header-subtitle {
         line-height: normal;
         margin-top: 5px;
+        font-size: 0.6rem;
+        text-transform: uppercase;
       }
 
-      .mt-content-logo {
+      .mt-modal-content-header-logo {
         width: 100px;
         height: 100px;
+      }
+    }
+
+    .mt-modal-content-main {
+      padding-top: 20px;
+      background-color: #f7f5f5;
+    }
+
+    .mt-modal-content-loading {
+      padding: 50px;
+      text-align: center;
+      .mt-modal-content-loading-text {
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+      .mt-modal-content-loading-loader {
+        /* HTML: <div class="loader"></div> */
+        .loader {
+          width: 60px;
+          aspect-ratio: 1;
+          color: #000;
+          border: 10px solid;
+          box-sizing: border-box;
+          border-radius: 50%;
+          animation: l6 2s infinite linear;
+          position: relative;
+        }
+        .loader:before {
+          content: "";
+          position: absolute;
+          height: 20px;
+          inset: auto calc(50% - 10px) 100%;
+          border-radius: 5px 5px 0 0;
+          background: linear-gradient(currentColor 0 0) top/100% 30%,
+            linear-gradient(currentColor 0 0) top/50% 100%;
+          background-repeat: no-repeat;
+        }
+        .loader:after {
+          content: "";
+          position: absolute;
+          inset: -8px -10px auto;
+          height: 15px;
+          background: radial-gradient(farthest-side, currentColor 94%, #0000)
+              left,
+            radial-gradient(farthest-side, currentColor 94%, #0000) right;
+          background-size: 15px 15px;
+          background-repeat: no-repeat;
+        }
+        @keyframes l6 {
+          0% {
+            background: conic-gradient(#77a4bd 0, #0000 0);
+          }
+          12.5% {
+            background: conic-gradient(#77a4bd 45deg, #0000 46deg);
+          }
+          25% {
+            background: conic-gradient(#77a4bd 90deg, #0000 91deg);
+          }
+          37.5% {
+            background: conic-gradient(#77a4bd 135deg, #0000 136deg);
+          }
+          50% {
+            background: conic-gradient(#77a4bd 180deg, #0000 181deg);
+          }
+          62.5% {
+            background: conic-gradient(#77a4bd 225deg, #0000 226deg);
+          }
+          75% {
+            background: conic-gradient(#77a4bd 270deg, #0000 271deg);
+          }
+          87.5% {
+            background: conic-gradient(#77a4bd 315deg, #0000 316deg);
+          }
+          100% {
+            background: conic-gradient(#77a4bd 360deg, #0000 360deg);
+          }
+        }
       }
     }
   }
