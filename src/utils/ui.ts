@@ -9,16 +9,14 @@ export class UI {
     this.elementContent = document.createElement("div");
     this.elementContentCloseBtn = document.createElement("span");
     this.elementContentText = document.createElement("p");
-
-    this.mount();
   }
 
-  private mount() {
-    this.element.id = "muchoTextoModal";
-    this.element.className = "muchoTextoModal";
+  public mount() {
+    this.element.id = "mt-modal";
+    this.element.className = "mt-modal";
 
-    this.elementContent.className = "modal-content";
-    this.elementContentCloseBtn.className = "close";
+    this.elementContent.className = `${this.element.className}-content`;
+    this.elementContentCloseBtn.className = `${this.elementContent.className}-close`;
     this.elementContentCloseBtn.innerHTML = "&times;";
 
     this.elementContent.appendChild(this.elementContentCloseBtn);
@@ -28,6 +26,8 @@ export class UI {
     this.createListeners();
 
     document.body.appendChild(this.element);
+
+    return this;
   }
 
   private loading() {

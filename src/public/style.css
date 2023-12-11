@@ -1,5 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+  --mt-font-family: 'Roboto', sans-serif;
+  --mt-font-size:   14px;
+  --mt-font-color:  #0c0c0c;
+  --mt-bg-color:  #ffffff;
+}
+
+.mt-popup {
+  font-family: var(--mt-font-family);
+  font-size: var(--mt-font-size);
+  color: var(--mt-font-color);
+  background-color: var(--mt-bg-color);
+
+  padding: 10px 20px;
+
+  .mt-text-center {
+    text-align: center;
+  }
+
+  .mt-text-justify {
+    text-align: justify;
+  }
+
+  .mt-icon {
+    width: 100px;
+    height: 100px;
+  }
+  .mt-buymecoffee {
+    height: 41px !important;
+    width: 150px !important;
+  }
+}
+
 /* The Modal (background) */
-.muchoTextoModal {
+.mt-modal {
+  font-family: var(--mt-font-family);
+  font-size: var(--mt-font-size);
+  color: var(--mt-font-color);
+
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 999999999999999999; /* Sit on top */
@@ -10,28 +49,30 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0, 0, 0); /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
 
-/* Modal Content/Box */
-.modal-content {
-  background-color: #ffffff;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}
+  /* Modal Content/Box */
+  .mt-modal-content {
+    background-color: var(--mt-bg-color);
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 500px;
+    font-size: 1rem;
 
-/* The Close Button */
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
+    /* The Close Button */
+    .mt-modal-content-close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+    .mt-modal-content-close:hover,
+    .mt-modal-content-close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
 }
