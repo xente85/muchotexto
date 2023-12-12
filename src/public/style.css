@@ -4,6 +4,7 @@
   --mt-font-family: "Roboto", sans-serif;
   --mt-font-size: 18px;
   --mt-font-color: #0c0c0c;
+  --mt-font-color-secondary: #999;
   --mt-font-color-error: red;
   --mt-bg-color: #ffffff;
 }
@@ -25,23 +26,44 @@
   }
 }
 
+.mt-text-center {
+  text-align: center;
+}
+
+.mt-text-justify {
+  text-align: justify;
+}
+
+.mt-pt {
+  padding-top: 20px !important;
+}
+
+.mt-mt {
+  margin-top: 20px !important;
+}
+
+.mt-my {
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+}
+
+.mt-modal-visible {
+  display: block !important;
+}
+
+.mt-modal-hide {
+  display: none !important;
+}
+
 .mt-popup {
   font-family: var(--mt-font-family);
-  font-size: var(--mt-font-size);
   color: var(--mt-font-color);
   background-color: var(--mt-bg-color);
+  font-size: var(--mt-font-size);
 
   padding: 10px 20px;
 
   width: 300px;
-
-  .mt-text-center {
-    text-align: center;
-  }
-
-  .mt-text-justify {
-    text-align: justify;
-  }
 
   .mt-icon {
     width: 100px;
@@ -53,20 +75,11 @@
   }
 }
 
-.mt-modal-visible {
-  display: block !important;
-}
-
-.mt-modal-hide {
-  display: none !important;
-}
-
 /* The Modal (background) */
 .mt-modal {
-  all: initial;
   font-family: var(--mt-font-family);
-  font-size: var(--mt-font-size);
   color: var(--mt-font-color);
+  font-size: var(--mt-font-size);
 
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -86,7 +99,7 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
     max-width: 700px;
-    font-size: 1rem;
+    font-size: 1em;
 
     /* The Close Button */
     .mt-modal-content-close {
@@ -109,7 +122,7 @@
       gap: 20px;
 
       .mt-modal-content-header-title {
-        font-size: 1.3rem;
+        font-size: 1.3em;
         line-height: normal;
         margin-top: 5px;
         font-family: var(--mt-font-family);
@@ -124,11 +137,11 @@
           font-style: italic;
 
           &::before {
-            content: open-quote; /* Agrega comillas de apertura */
+            content: open-quote;
           }
 
           &::after {
-            content: close-quote; /* Agrega comillas de cierre */
+            content: close-quote;
           }
         }
       }
@@ -136,9 +149,10 @@
       .mt-modal-content-header-subtitle {
         line-height: normal;
         margin-top: 5px;
-        font-size: 0.6rem;
+        font-size: 0.6em;
         text-transform: uppercase;
         font-family: var(--mt-font-family);
+        color: var(--mt-font-color-secondary);
       }
 
       --mt-logo-w: 100px;
@@ -160,13 +174,23 @@
 
       .mt-modal-content-result {
         .mt-modal-content-result-text {
-          font-size: 0.9rem;
+          font-size: 0.9em;
           font-family: var(--mt-font-family);
-          line-height: 1.5rem;
+          line-height: 1.5em;
           &.error {
             color: var(--mt-font-color-error);
+            font-weight: bold;
           }
         }
+      }
+    }
+
+    .mt-modal-content-actions {
+      margin-top: 20px;
+
+      .mt-buymecoffee {
+        height: 41px !important;
+        width: 150px !important;
       }
     }
 
@@ -175,18 +199,23 @@
       text-align: center;
       .mt-modal-content-loading-text {
         margin-top: 20px;
-        font-size: 0.8rem;
+        font-size: 0.8em;
         font-style: italic;
         text-align: center;
         font-family: var(--mt-font-family);
+        color: var(--mt-font-color-secondary);
+
+        &::after {
+          content: "...";
+        }
       }
       .mt-modal-content-loading-loader {
-        .loader {
+        .mt-loader {
           margin: 0 auto;
 
           /* Spinner size and color */
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 1.5em;
+          height: 1.5em;
           border-top-color: var(--mt-font-color);
           border-left-color: var(--mt-font-color);
 

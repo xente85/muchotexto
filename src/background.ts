@@ -43,7 +43,8 @@ async function onTabClick(
       event,
       sendTabMessageTitle,
       sendTabMessageText,
-      sendTabMessageLoading
+      sendTabMessageLoading,
+      sendTabMessageActions
     )
   )
     return;

@@ -29,13 +29,18 @@ export class UI {
         <div class="${this.prefixCSS}-modal-content-main">
           <div class="${this.prefixCSS}-modal-content-loading">
             <div class="${this.prefixCSS}-modal-content-loading-loader">
-              <div class="loader"></div>
+              <div class="mt-loader"></div>
             </div>
             <p class="${this.prefixCSS}-modal-content-loading-text"></p>
           </div>
           <div class="${this.prefixCSS}-modal-content-result">
             <p class="${this.prefixCSS}-modal-content-result-text"></p>
           </div>
+        </div>
+        <div class="${this.prefixCSS}-modal-content-actions">
+          <a href="https://www.buymeacoffee.com/vicenalvaro" target="_blank">
+            <img class="mt-buymecoffee" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
+          </a>
         </div>
       </div>`;
 
@@ -84,6 +89,26 @@ export class UI {
       `${this.prefixCSS}-modal-hide`
     );
     this.getElementContentResultText().textContent = "";
+
+    this.closeActions();
+  }
+
+  private showActions() {
+    this.getElementContentActions().classList.remove(
+      `${this.prefixCSS}-modal-hide`
+    );
+    this.getElementContentActions().classList.add(
+      `${this.prefixCSS}-modal-visible`
+    );
+  }
+
+  private closeActions() {
+    this.getElementContentActions().classList.remove(
+      `${this.prefixCSS}-modal-visible`
+    );
+    this.getElementContentActions().classList.add(
+      `${this.prefixCSS}-modal-hide`
+    );
   }
 
   private handleCloseClick = () => {
@@ -126,6 +151,11 @@ export class UI {
     this.getElementContentResultText().classList.remove("error");
     this.getElementContentResultText().innerHTML = resumen;
     this.openModal();
+  }
+
+  public openModalActions(data: any) {
+    console.log("openModalActions", data);
+    this.showActions();
   }
 
   public openModalError(error: string) {
@@ -200,6 +230,12 @@ export class UI {
   private getElementContentResultText() {
     return this.element.getElementsByClassName(
       `${this.prefixCSS}-modal-content-result-text`
+    )[0];
+  }
+
+  private getElementContentActions() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-actions`
     )[0];
   }
 }

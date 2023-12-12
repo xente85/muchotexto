@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   }
 
   if (type === "actions") {
-    // ui.openModalActions(data);
+    ui.openModalActions(data);
     return;
   }
 
