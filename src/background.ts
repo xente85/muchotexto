@@ -20,6 +20,15 @@ chrome.runtime.onInstalled.addListener(function () {
     contexts: ["selection"],
     id: "selectionTranslate",
   });
+  chrome.contextMenus.create({
+    title: chrome.i18n.getMessage("menuPage"),
+    id: "summarizePage",
+  });
+  chrome.contextMenus.create({
+    title: chrome.i18n.getMessage("menuClickbait"),
+    contexts: ["selection"],
+    id: "clickbait",
+  });
 
   devMenu();
 });
@@ -132,6 +141,66 @@ async function getDataPrompt(
       );
 
       return { type: "translate", data: event.selectionText };
+    }
+    case "summarizePage": {
+      if (!event.pageUrl)
+        throw new Error(chrome.i18n.getMessage("errorPromptPage"));
+
+      sendTabMessageTitle(tabId, {
+        title: event.pageUrl,
+        subtitle: chrome.i18n.getMessage("menuPage"),
+        isLink: true,
+      });
+
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingPage"));
+
+      const page = await getArticle(event.pageUrl);
+
+      if (page === null || page.error) {
+        throw new Error(chrome.i18n.getMessage("errorPage"));
+      }
+
+      sendTabMessageTitle(tabId, {
+        title: page.title,
+        subtitle: chrome.i18n.getMessage("menuPage"),
+      });
+
+      sendTabMessageLoading(
+        tabId,
+        chrome.i18n.getMessage("uiLoadingPageSummary")
+      );
+
+      return { type: "page", data: page };
+    }
+    case "clickbait": {
+      if (!event.linkUrl)
+        throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
+
+      sendTabMessageTitle(tabId, {
+        title: event.linkUrl,
+        subtitle: chrome.i18n.getMessage("menuClickbait"),
+        isLink: true,
+      });
+
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
+
+      const article = await getArticle(event.linkUrl);
+
+      if (article === null || article.error) {
+        throw new Error(chrome.i18n.getMessage("errorArticulo"));
+      }
+
+      sendTabMessageTitle(tabId, {
+        title: article.title,
+        subtitle: chrome.i18n.getMessage("menuClickbait"),
+      });
+
+      sendTabMessageLoading(
+        tabId,
+        chrome.i18n.getMessage("uiLoadingArticleSummary")
+      );
+
+      return { type: "article", data: article };
     }
     default: {
       throw new Error(chrome.i18n.getMessage("errorPromptUnkown"));

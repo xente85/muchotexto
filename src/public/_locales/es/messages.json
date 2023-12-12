@@ -6,19 +6,31 @@
     "message": "Extensión de chrome para traducir, hacer un resumen de un texto o enlace seleccionado con la ayuda de ChatGPT"
   },
   "menuSelection": {
-    "message": "Resume la selección"
+    "message": "Resumen del texto seleccionado"
   },
   "menuSelectionTraslate": {
-    "message": "Traduce la selección"
+    "message": "Resumen del texto seleccionado"
   },
   "menuLink": {
-    "message": "Resume el contenido"
+    "message": "Resumen del artículo"
+  },
+  "menuPage": {
+    "message": "Resumen de esta página"
+  },
+  "menuClickbait": {
+    "message": "Clickbait"
   },
   "promptSummarize": {
-    "message": "Resume este texto a no más de 200 palabras: '''$1'''"
+    "message": "Resume este texto: '''$1'''"
   },
   "promptArticle": {
-    "message": "Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular y evitar el clickbait. Dame también la conclusión del autor: '''$1'''"
+    "message": "Haz un breve resumen (máximo 200 caracteres) de la noticia que te paso con la información mas importante. Intenta resolver lo que propone el titular y además descubir la intención del autor: '''$1'''"
+  },
+  "promptPage": {
+    "message": "Haz un breve resumen de esta página web con la información mas importante: '''$1'''"
+  },
+  "promptClickbait": {
+    "message": "Dame la respuesta directa a lo que se refiere el titular: '''$1'''"
   },
   "promptTranslate": {
     "message": "Traduce este texto: '''$1'''"
@@ -35,6 +47,9 @@
   "errorPromptArticle": {
     "message": "Tipo \"$1\" sin event.linkUrl"
   },
+  "errorPromptPage": {
+    "message": "Tipo \"$1\" sin event.pageUrl"
+  },
   "errorPromptSelection": {
     "message": "Tipo \"$1\" sin event.selectionText"
   },
@@ -44,14 +59,23 @@
   "errorArticulo": {
     "message": "No se ha podido extraer la información del artículo"
   },
+  "errorPage": {
+    "message": "No se ha podido extraer la información de esta página"
+  },
   "uiLoading": {
     "message": "Cargando"
   },
   "uiLoadingArticle": {
     "message": "Leyendo artículo"
   },
+  "uiLoadingPage": {
+    "message": "Leyendo página"
+  },
   "uiLoadingArticleSummary": {
     "message": "Resumiendo artículo"
+  },
+  "uiLoadingPageSummary": {
+    "message": "Resumiendo página"
   },
   "uiLoadingSelectionSummary": {
     "message": "Resumiendo texto seleccionado"

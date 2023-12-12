@@ -15,6 +15,14 @@ export class prompts {
             resolve(prompts.promptTranslate(data));
             break;
           }
+          case "page": {
+            resolve(prompts.promptPage(data));
+            break;
+          }
+          case "clickbait": {
+            resolve(prompts.promptClickbait(data));
+            break;
+          }
           default: {
             reject(chrome.i18n.getMessage("errorPromptUnkown", [type]));
             break;
@@ -29,11 +37,29 @@ export class prompts {
   static promptArticle(data: any) {
     const jsonArticle = {
       titular: data.title,
-      noticia: data.description,
+      noticia: data.content,
     };
     return chrome.i18n.getMessage("promptArticle", [
       JSON.stringify(jsonArticle),
     ]);
+  }
+
+  static promptClickbait(data: any) {
+    const jsonArticle = {
+      titular: data.title,
+      noticia: data.content,
+    };
+    return chrome.i18n.getMessage("promptClickbait", [
+      JSON.stringify(jsonArticle),
+    ]);
+  }
+
+  static promptPage(data: any) {
+    const jsonArticle = {
+      titular: data.title,
+      noticia: data.content,
+    };
+    return chrome.i18n.getMessage("promptPage", [JSON.stringify(jsonArticle)]);
   }
 
   static promptSummarize(textoSeleccionado: string) {
