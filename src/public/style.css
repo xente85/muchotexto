@@ -64,7 +64,9 @@
   padding: 10px 20px;
 
   width: 300px;
-
+  .mt-instructions {
+    font-size: 0.9em;
+  }
   .mt-icon {
     width: 100px;
     height: 100px;
@@ -169,7 +171,7 @@
     .mt-modal-content-main {
       margin-top: 20px;
       padding: 20px;
-      background-color: #fff;
+      background-color: #ddd;
       border: 1px solid #ccc;
 
       .mt-modal-content-result {
@@ -177,7 +179,7 @@
           font-size: 0.9em;
           font-family: var(--mt-font-family);
           line-height: 1.5em;
-          &.error {
+          &.mt-error {
             color: var(--mt-font-color-error);
             font-weight: bold;
           }
@@ -187,6 +189,29 @@
 
     .mt-modal-content-actions {
       margin-top: 20px;
+
+      .mt-modal-content-actions-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .mt-modal-content-actions-list {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          .mt-modal-content-action-link {
+            cursor: pointer;
+            text-decoration: underline;
+            color: var(--mt-font-color);
+            font-size: 0.9em;
+            font-family: var(--mt-font-family);
+            &:hover {
+              font-weight: bold;
+            }
+          }
+        }
+      }
 
       .mt-buymecoffee {
         height: 41px !important;

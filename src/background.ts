@@ -44,7 +44,8 @@ async function onTabClick(
       sendTabMessageTitle,
       sendTabMessageText,
       sendTabMessageLoading,
-      sendTabMessageActions
+      sendTabMessageActions,
+      sendTabMessageError
     )
   )
     return;
@@ -52,7 +53,7 @@ async function onTabClick(
     const { type, data } = await getDataPrompt(tabId, event);
     const prompt = await prompts.getPrompt(type, data);
     const response = await AI.requestInfo(prompt);
-    processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
+    await processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
     sendTabMessageActions(tabId, { type, data });
   } catch (e) {
     sendTabMessageError(tabId, {

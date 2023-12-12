@@ -15,6 +15,10 @@ function devMenu() {
     title: "Test Resultado articulo",
     id: "testResultadoArticulo",
   });
+  chrome.contextMenus.create({
+    title: "Test Error",
+    id: "testError",
+  });
 }
 
 function devOnClick(
@@ -23,17 +27,21 @@ function devOnClick(
   sendTabMessageTitle: any,
   sendTabMessageText: any,
   sendTabMessageLoading: any,
-  sendTabMessageActions: any
+  sendTabMessageActions: any,
+  sendTabMessageError: any
 ) {
   const menuId = event.menuItemId.toString();
   if (
-    ["testResultadoSeleccion", "testLoading", "testResultadoArticulo"].includes(
-      menuId
-    )
+    [
+      "testResultadoSeleccion",
+      "testLoading",
+      "testResultadoArticulo",
+      "testError",
+    ].includes(menuId)
   ) {
-    if (event.menuItemId === "testResultadoSeleccion") {
+    if (menuId === "testResultadoSeleccion") {
       sendTabMessageTitle(tabId, {
-        title: event.menuItemId,
+        title: menuId,
         subtitle: "Subtitulo",
         isSelection: true,
       });
@@ -46,17 +54,17 @@ function devOnClick(
         type: "selection",
         data: { selection: true },
       });
-    } else if (event.menuItemId === "testLoading") {
+    } else if (menuId === "testLoading") {
       sendTabMessageTitle(tabId, {
-        title: event.menuItemId,
+        title: menuId,
         subtitle: "Subtitulo",
         isLink: true,
       });
 
       sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
-    } else if (event.menuItemId === "testResultadoArticulo") {
+    } else if (menuId === "testResultadoArticulo") {
       sendTabMessageTitle(tabId, {
-        title: event.menuItemId,
+        title: menuId,
         subtitle: "Subtitulo",
       });
 
@@ -67,6 +75,14 @@ function devOnClick(
       sendTabMessageActions(tabId, {
         type: "article",
         data: { article: true },
+      });
+    } else if (menuId === "testError") {
+      sendTabMessageTitle(tabId, {
+        title: menuId,
+        subtitle: "Subtitulo",
+      });
+      sendTabMessageError(tabId, {
+        error: "Error test",
       });
     }
     return true;

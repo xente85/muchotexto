@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (title)
     title.innerText = chrome.i18n.getMessage("extensionName");
 
-  const instruction = document.getElementById("instructions");
+  const instruction = document.getElementById("mt-instructions");
   if (instruction)
     instruction.innerText = chrome.i18n.getMessage("uiInstruction");
 });

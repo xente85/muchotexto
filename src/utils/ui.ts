@@ -38,9 +38,14 @@ export class UI {
           </div>
         </div>
         <div class="${this.prefixCSS}-modal-content-actions">
-          <a href="https://www.buymeacoffee.com/vicenalvaro" target="_blank">
-            <img class="mt-buymecoffee" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
-          </a>
+          <div class="${this.prefixCSS}-modal-content-actions-wrapper">
+            <div class="${this.prefixCSS}-modal-content-actions-list"></div>
+            <div>
+              <a href="https://www.buymeacoffee.com/vicenalvaro" target="_blank">
+                <img class="mt-buymecoffee" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>`;
 
@@ -58,7 +63,7 @@ export class UI {
     this.getElementContentLoading().classList.add(
       `${this.prefixCSS}-modal-visible`
     );
-    this.getElementContentLoadingText().textContent = text;
+    this.getElementContentLoadingText().innerHTML = text;
   }
 
   private closeLoading() {
@@ -68,7 +73,7 @@ export class UI {
     this.getElementContentLoading().classList.add(
       `${this.prefixCSS}-modal-hide`
     );
-    this.getElementContentLoadingText().textContent = "";
+    this.getElementContentLoadingText().innerHTML = "";
   }
 
   private showResult(text: string) {
@@ -78,7 +83,7 @@ export class UI {
     this.getElementContentResult().classList.add(
       `${this.prefixCSS}-modal-visible`
     );
-    this.getElementContentResultText().textContent = text;
+    this.getElementContentResultText().innerHTML = text;
   }
 
   private closeResult() {
@@ -88,7 +93,7 @@ export class UI {
     this.getElementContentResult().classList.add(
       `${this.prefixCSS}-modal-hide`
     );
-    this.getElementContentResultText().textContent = "";
+    this.getElementContentResultText().innerHTML = "";
 
     this.closeActions();
   }
@@ -109,6 +114,7 @@ export class UI {
     this.getElementContentActions().classList.add(
       `${this.prefixCSS}-modal-hide`
     );
+    this.removeActions();
   }
 
   private handleCloseClick = () => {
@@ -123,11 +129,22 @@ export class UI {
   private closeModal() {
     this.element.classList.remove("mt-modal-visible");
     this.element.classList.add("mt-modal-hide");
+    this.closeActions();
+    this.closeLoading();
+    this.closeResult();
   }
 
   public openModalTitle(data: any) {
     const { title, subtitle, isLink, isSelection } = data;
-    this.getElementContentTitle().innerHTML = title;
+
+    const maxCaractersTitle = 400;
+    if (!isLink && title.length > maxCaractersTitle) {
+      const textTruncated = title.substring(0, maxCaractersTitle) + "...";
+      this.getElementContentTitle().innerHTML = textTruncated;
+    } else {
+      this.getElementContentTitle().innerHTML = title;
+    }
+
     this.getElementContentSubTitle().innerHTML = subtitle;
 
     if (isLink) this.getElementContentTitle().classList.add("link");
@@ -147,20 +164,26 @@ export class UI {
 
   public openModalText(resumen: string) {
     this.closeLoading();
+    this.closeActions();
     this.showResult(resumen);
-    this.getElementContentResultText().classList.remove("error");
-    this.getElementContentResultText().innerHTML = resumen;
+    this.getElementContentResultText().classList.remove(
+      `${this.prefixCSS}-error`
+    );
     this.openModal();
   }
 
-  public openModalActions(data: any) {
-    console.log("openModalActions", data);
+  public openModalActions(info: any) {
+    const { type, data } = info;
+    if (type === "article") {
+      const { url } = data;
+      this.addActionLink(url, "ir al artículo");
+    }
     this.showActions();
   }
 
   public openModalError(error: string) {
     this.openModalText(error);
-    this.getElementContentResultText().classList.add("error");
+    this.getElementContentResultText().classList.add(`${this.prefixCSS}-error`);
   }
 
   private unmount() {
@@ -237,5 +260,28 @@ export class UI {
     return this.element.getElementsByClassName(
       `${this.prefixCSS}-modal-content-actions`
     )[0];
+  }
+
+  private getElementContentActionsList() {
+    return this.element.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-actions-list`
+    )[0];
+  }
+
+  private addActionLink(url: string, text: string) {
+    const link = `<a href="${url}" class="${this.prefixCSS}-modal-content-action-link" target="_blank">${text}</a>`;
+    const actionElement = this.htmlStringToElement(link);
+    if (actionElement)
+      this.getElementContentActionsList().appendChild(actionElement);
+  }
+
+  private removeActions() {
+    this.getElementContentActionsList().innerHTML = "";
+  }
+
+  private htmlStringToElement(htmlString: string) {
+    const range = document.createRange();
+    const fragment = range.createContextualFragment(htmlString);
+    return fragment.firstChild;
   }
 }
