@@ -9,6 +9,7 @@ export class UI {
 
   public mount() {
     this.element.id = `${this.prefixCSS}-modal`;
+    this.element.classList.add(this.prefixCSS);
     this.element.classList.add(`${this.prefixCSS}-modal`);
 
     this.element.innerHTML = `
@@ -20,7 +21,7 @@ export class UI {
           }-modal-content-header-logo" src="${chrome.runtime.getURL(
       "assets/icons/icon.png"
     )}" alt="Mucho texto">
-          <div>
+          <div class="${this.prefixCSS}-modal-content-header-wrapper-title">
             <h2 class="${this.prefixCSS}-modal-content-header-subtitle"></h2>
             <h1 class="${this.prefixCSS}-modal-content-header-title"></h1>
           </div>
@@ -49,12 +50,18 @@ export class UI {
     this.getElementContentLoading().classList.remove(
       `${this.prefixCSS}-modal-hide`
     );
+    this.getElementContentLoading().classList.add(
+      `${this.prefixCSS}-modal-visible`
+    );
     this.getElementContentLoadingText().textContent = text;
   }
 
   private closeLoading() {
     this.getElementContentLoading().classList.remove(
       `${this.prefixCSS}-modal-visible`
+    );
+    this.getElementContentLoading().classList.add(
+      `${this.prefixCSS}-modal-hide`
     );
     this.getElementContentLoadingText().textContent = "";
   }
@@ -63,12 +70,18 @@ export class UI {
     this.getElementContentResult().classList.remove(
       `${this.prefixCSS}-modal-hide`
     );
+    this.getElementContentResult().classList.add(
+      `${this.prefixCSS}-modal-visible`
+    );
     this.getElementContentResultText().textContent = text;
   }
 
   private closeResult() {
     this.getElementContentResult().classList.remove(
       `${this.prefixCSS}-modal-visible`
+    );
+    this.getElementContentResult().classList.add(
+      `${this.prefixCSS}-modal-hide`
     );
     this.getElementContentResultText().textContent = "";
   }
@@ -87,16 +100,16 @@ export class UI {
     this.element.classList.add("mt-modal-hide");
   }
 
-  public openModalTitle(
-    title: string = "",
-    subtitle: string = "",
-    isLink = ""
-  ) {
+  public openModalTitle(data: any) {
+    const { title, subtitle, isLink, isSelection } = data;
     this.getElementContentTitle().innerHTML = title;
     this.getElementContentSubTitle().innerHTML = subtitle;
 
     if (isLink) this.getElementContentTitle().classList.add("link");
     else this.getElementContentTitle().classList.remove("link");
+
+    if (isSelection) this.getElementContentTitle().classList.add("selection");
+    else this.getElementContentTitle().classList.remove("selection");
 
     this.openModal();
   }
@@ -110,12 +123,14 @@ export class UI {
   public openModalText(resumen: string) {
     this.closeLoading();
     this.showResult(resumen);
+    this.getElementContentResultText().classList.remove("error");
     this.getElementContentResultText().innerHTML = resumen;
     this.openModal();
   }
 
   public openModalError(error: string) {
     this.openModalText(error);
+    this.getElementContentResultText().classList.add("error");
   }
 
   private unmount() {

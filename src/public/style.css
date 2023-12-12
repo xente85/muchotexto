@@ -4,7 +4,25 @@
   --mt-font-family: "Roboto", sans-serif;
   --mt-font-size: 18px;
   --mt-font-color: #0c0c0c;
+  --mt-font-color-error: red;
   --mt-bg-color: #ffffff;
+}
+
+.mt {
+  h1,
+  h2,
+  p {
+    font-family: var(--mt-font-family);
+    color: var(--mt-font-color);
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+  }
 }
 
 .mt-popup {
@@ -45,6 +63,7 @@
 
 /* The Modal (background) */
 .mt-modal {
+  all: initial;
   font-family: var(--mt-font-family);
   font-size: var(--mt-font-size);
   color: var(--mt-font-color);
@@ -66,7 +85,7 @@
     padding: 20px;
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 500px;
+    max-width: 700px;
     font-size: 1rem;
 
     /* The Close Button */
@@ -93,11 +112,24 @@
         font-size: 1.3rem;
         line-height: normal;
         margin-top: 5px;
+        font-family: var(--mt-font-family);
 
         &.link {
           white-space: nowrap; /* Evita el desbordamiento de línea */
           overflow: hidden; /* Oculta el texto que no cabe */
           text-overflow: ellipsis; /* Muestra puntos suspensivos (...) al final del texto truncado */
+        }
+
+        &.selection {
+          font-style: italic;
+
+          &::before {
+            content: open-quote; /* Agrega comillas de apertura */
+          }
+
+          &::after {
+            content: close-quote; /* Agrega comillas de cierre */
+          }
         }
       }
 
@@ -106,89 +138,79 @@
         margin-top: 5px;
         font-size: 0.6rem;
         text-transform: uppercase;
+        font-family: var(--mt-font-family);
       }
 
+      --mt-logo-w: 100px;
+      --mt-logo-h: 100px;
       .mt-modal-content-header-logo {
-        width: 100px;
-        height: 100px;
+        width: var(--mt-logo-w);
+        height: var(--mt-logo-h);
+      }
+      .mt-modal-content-header-wrapper-title {
+        width: calc(100% - var(--mt-logo-w));
       }
     }
 
     .mt-modal-content-main {
-      padding-top: 20px;
-      background-color: #f7f5f5;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+
+      .mt-modal-content-result {
+        .mt-modal-content-result-text {
+          font-size: 0.9rem;
+          font-family: var(--mt-font-family);
+          line-height: 1.5rem;
+          &.error {
+            color: var(--mt-font-color-error);
+          }
+        }
+      }
     }
 
     .mt-modal-content-loading {
       padding: 50px;
       text-align: center;
       .mt-modal-content-loading-text {
-        font-size: 0.9rem;
+        margin-top: 20px;
+        font-size: 0.8rem;
         font-style: italic;
+        text-align: center;
+        font-family: var(--mt-font-family);
       }
       .mt-modal-content-loading-loader {
-        /* HTML: <div class="loader"></div> */
         .loader {
-          width: 60px;
-          aspect-ratio: 1;
-          color: #000;
-          border: 10px solid;
-          box-sizing: border-box;
+          margin: 0 auto;
+
+          /* Spinner size and color */
+          width: 1.5rem;
+          height: 1.5rem;
+          border-top-color: var(--mt-font-color);
+          border-left-color: var(--mt-font-color);
+
+          /* Additional spinner styles */
+          animation: spinner 1s linear infinite;
+          border-bottom-color: transparent;
+          border-right-color: transparent;
+          border-style: solid;
+          border-width: 2px;
           border-radius: 50%;
-          animation: l6 2s infinite linear;
-          position: relative;
-        }
-        .loader:before {
-          content: "";
-          position: absolute;
-          height: 20px;
-          inset: auto calc(50% - 10px) 100%;
-          border-radius: 5px 5px 0 0;
-          background: linear-gradient(currentColor 0 0) top/100% 30%,
-            linear-gradient(currentColor 0 0) top/50% 100%;
-          background-repeat: no-repeat;
-        }
-        .loader:after {
-          content: "";
-          position: absolute;
-          inset: -8px -10px auto;
-          height: 15px;
-          background: radial-gradient(farthest-side, currentColor 94%, #0000)
-              left,
-            radial-gradient(farthest-side, currentColor 94%, #0000) right;
-          background-size: 15px 15px;
-          background-repeat: no-repeat;
-        }
-        @keyframes l6 {
-          0% {
-            background: conic-gradient(#77a4bd 0, #0000 0);
-          }
-          12.5% {
-            background: conic-gradient(#77a4bd 45deg, #0000 46deg);
-          }
-          25% {
-            background: conic-gradient(#77a4bd 90deg, #0000 91deg);
-          }
-          37.5% {
-            background: conic-gradient(#77a4bd 135deg, #0000 136deg);
-          }
-          50% {
-            background: conic-gradient(#77a4bd 180deg, #0000 181deg);
-          }
-          62.5% {
-            background: conic-gradient(#77a4bd 225deg, #0000 226deg);
-          }
-          75% {
-            background: conic-gradient(#77a4bd 270deg, #0000 271deg);
-          }
-          87.5% {
-            background: conic-gradient(#77a4bd 315deg, #0000 316deg);
-          }
-          100% {
-            background: conic-gradient(#77a4bd 360deg, #0000 360deg);
-          }
+          box-sizing: border-box;
+          display: inline-block;
+          vertical-align: middle;
         }
       }
     }
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

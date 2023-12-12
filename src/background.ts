@@ -1,4 +1,5 @@
 import { AI } from "./utils/ai";
+import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
 import { getArticle } from "./utils/utils";
 
@@ -19,6 +20,8 @@ chrome.runtime.onInstalled.addListener(function () {
     contexts: ["selection"],
     id: "selectionTranslate",
   });
+
+  devMenu();
 });
 
 chrome.contextMenus.onClicked.addListener((event) => {
@@ -34,6 +37,16 @@ async function onTabClick(
   tabId: number,
   event: chrome.contextMenus.OnClickData
 ) {
+  if (
+    devOnClick(
+      tabId,
+      event,
+      sendTabMessageTitle,
+      sendTabMessageText,
+      sendTabMessageLoading
+    )
+  )
+    return;
   try {
     const { type, data } = await getDataPrompt(tabId, event);
     const prompt = await prompts.getPrompt(type, data);
@@ -41,7 +54,9 @@ async function onTabClick(
     processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
     sendTabMessageActions(tabId, { type, data });
   } catch (e) {
-    sendTabMessageError(tabId, { error: e });
+    sendTabMessageError(tabId, {
+      error: e instanceof Error ? e.message : "Error desconocido",
+    });
   }
 }
 
@@ -50,8 +65,6 @@ async function getDataPrompt(
   event: chrome.contextMenus.OnClickData
 ) {
   const { menuItemId } = event;
-
-  console.log("getDataPrompt", event);
 
   switch (menuItemId) {
     case "link": {
@@ -68,7 +81,7 @@ async function getDataPrompt(
 
       const article = await getArticle(event.linkUrl);
 
-      if (article === null) {
+      if (article === null || article.error) {
         throw new Error(chrome.i18n.getMessage("errorArticulo"));
       }
 
@@ -91,6 +104,7 @@ async function getDataPrompt(
       sendTabMessageTitle(tabId, {
         title: event.selectionText,
         subtitle: chrome.i18n.getMessage("menuSelection"),
+        isSelection: true,
       });
 
       sendTabMessageLoading(
@@ -107,6 +121,7 @@ async function getDataPrompt(
       sendTabMessageTitle(tabId, {
         title: event.selectionText,
         subtitle: chrome.i18n.getMessage("menuSelectionTraslate"),
+        isSelection: true,
       });
 
       sendTabMessageLoading(

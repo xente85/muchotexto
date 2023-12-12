@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
 
   if (type === "title") {
-    ui.openModalTitle(data.title, data.subtitle, data.isLink);
+    ui.openModalTitle(data);
     return;
   }
 

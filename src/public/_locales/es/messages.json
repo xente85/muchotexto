@@ -18,7 +18,7 @@
     "message": "Resume este texto a no más de 200 palabras: '''$1'''"
   },
   "promptArticle": {
-    "message": "Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular y evitar el clickbait: '''$1'''"
+    "message": "Quiero que me hagas un resumen de no mas de 200 palabras de esta noticia. Pon el foco a lo que se refiere el titular y evitar el clickbait. Dame también la conclusión del autor: '''$1'''"
   },
   "promptTranslate": {
     "message": "Traduce este texto: '''$1'''"
