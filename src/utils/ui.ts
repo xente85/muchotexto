@@ -181,7 +181,7 @@ export class UI {
 
   public openModalActions(info: any) {
     const { type, data } = info;
-    if (type === "article") {
+    if (["article"].includes(type)) {
       const { url } = data;
       this.addActionLink(url, "ir al artículo");
     }

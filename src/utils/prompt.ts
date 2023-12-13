@@ -19,10 +19,6 @@ export class prompts {
             resolve(prompts.promptPage(data));
             break;
           }
-          case "clickbait": {
-            resolve(prompts.promptClickbait(data));
-            break;
-          }
           default: {
             reject(chrome.i18n.getMessage("errorPromptUnkown", [type]));
             break;
@@ -40,16 +36,6 @@ export class prompts {
       noticia: data.content,
     };
     return chrome.i18n.getMessage("promptArticle", [
-      JSON.stringify(jsonArticle),
-    ]);
-  }
-
-  static promptClickbait(data: any) {
-    const jsonArticle = {
-      titular: data.title,
-      noticia: data.content,
-    };
-    return chrome.i18n.getMessage("promptClickbait", [
       JSON.stringify(jsonArticle),
     ]);
   }

@@ -17,20 +17,14 @@
   "menuPage": {
     "message": "Resumen de esta página"
   },
-  "menuClickbait": {
-    "message": "Clickbait"
-  },
   "promptSummarize": {
     "message": "Resume este texto: '''$1'''"
   },
   "promptArticle": {
-    "message": "Haz un breve resumen (máximo 200 caracteres) de la noticia que te paso con la información mas importante. Intenta resolver lo que propone el titular y además descubir la intención del autor: '''$1'''"
+    "message": "Dame la respuesta directa a lo que se refiere el titular: '''$1'''"
   },
   "promptPage": {
     "message": "Haz un breve resumen de esta página web con la información mas importante: '''$1'''"
-  },
-  "promptClickbait": {
-    "message": "Dame la respuesta directa a lo que se refiere el titular: '''$1'''"
   },
   "promptTranslate": {
     "message": "Traduce este texto: '''$1'''"

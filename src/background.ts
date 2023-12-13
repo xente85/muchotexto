@@ -24,11 +24,6 @@ chrome.runtime.onInstalled.addListener(function () {
     title: chrome.i18n.getMessage("menuPage"),
     id: "summarizePage",
   });
-  chrome.contextMenus.create({
-    title: chrome.i18n.getMessage("menuClickbait"),
-    contexts: ["selection"],
-    id: "clickbait",
-  });
 
   devMenu();
 });
@@ -171,36 +166,6 @@ async function getDataPrompt(
       );
 
       return { type: "page", data: page };
-    }
-    case "clickbait": {
-      if (!event.linkUrl)
-        throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
-
-      sendTabMessageTitle(tabId, {
-        title: event.linkUrl,
-        subtitle: chrome.i18n.getMessage("menuClickbait"),
-        isLink: true,
-      });
-
-      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
-
-      const article = await getArticle(event.linkUrl);
-
-      if (article === null || article.error) {
-        throw new Error(chrome.i18n.getMessage("errorArticulo"));
-      }
-
-      sendTabMessageTitle(tabId, {
-        title: article.title,
-        subtitle: chrome.i18n.getMessage("menuClickbait"),
-      });
-
-      sendTabMessageLoading(
-        tabId,
-        chrome.i18n.getMessage("uiLoadingArticleSummary")
-      );
-
-      return { type: "article", data: article };
     }
     default: {
       throw new Error(chrome.i18n.getMessage("errorPromptUnkown"));

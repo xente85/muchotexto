@@ -1,24 +1,30 @@
 {
   "extensionName": {
-    "message": "Mucho Texto"
+    "message": "Much Text"
   },
   "extensionDescription": {
-    "message": "Chrome extension for translating, summarizing selected text or link with the assistance of ChatGPT."
+    "message": "Chrome extension for translating, summarizing selected text or link with the help of ChatGPT"
   },
   "menuSelection": {
-    "message": "Summarize Selection"
+    "message": "Summary of selected text"
   },
   "menuSelectionTraslate": {
-    "message": "Translate Selection"
+    "message": "Summary of selected text"
   },
   "menuLink": {
-    "message": "Summarize Content"
+    "message": "Article summary"
   },
-  "promptSelection": {
-    "message": "Summarize this text in no more than 200 words: '''$1'''"
+  "menuPage": {
+    "message": "Summary of this page"
+  },
+  "promptSummarize": {
+    "message": "Summarize this text: '''$1'''"
   },
   "promptArticle": {
-    "message": "I want you to summarize this news in no more than 200 words. Focus on what the headline refers to and avoid clickbait: '''$1'''"
+    "message": "Give a direct response to what the headline refers to: '''$1'''"
+  },
+  "promptPage": {
+    "message": "Provide a brief summary of this webpage with the most important information: '''$1'''"
   },
   "promptTranslate": {
     "message": "Translate this text: '''$1'''"
@@ -27,13 +33,16 @@
     "message": "Something went wrong. Please try again in a few minutes: $1"
   },
   "errorReset": {
-    "message": "Something went wrong. Are you connected to <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a>? Try logging out and logging in again."
+    "message": "Something went wrong. Are you connected to <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a>? Try logging out and logging back in."
   },
   "errorLogin": {
-    "message": "You need to visit <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a> once and check if the connection is secure. Redirecting..."
+    "message": "You need to visit <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a> once and verify if the connection is secure. Redirecting..."
   },
   "errorPromptArticle": {
     "message": "Type \"$1\" without event.linkUrl"
+  },
+  "errorPromptPage": {
+    "message": "Type \"$1\" without event.pageUrl"
   },
   "errorPromptSelection": {
     "message": "Type \"$1\" without event.selectionText"
@@ -42,24 +51,33 @@
     "message": "Unknown type \"$1\""
   },
   "errorArticulo": {
-    "message": "The information from the article could not be extracted"
+    "message": "Failed to extract information from the article"
+  },
+  "errorPage": {
+    "message": "Failed to extract information from this page"
   },
   "uiLoading": {
-    "message": "Loading..."
+    "message": "Loading"
   },
   "uiLoadingArticle": {
     "message": "Reading article"
   },
+  "uiLoadingPage": {
+    "message": "Reading page"
+  },
   "uiLoadingArticleSummary": {
-      "message": "Summarizing article"
+    "message": "Summarizing article"
+  },
+  "uiLoadingPageSummary": {
+    "message": "Summarizing page"
   },
   "uiLoadingSelectionSummary": {
-      "message": "Summarizing selected text"
+    "message": "Summarizing selected text"
   },
   "uiLoadingSelectionTraslate": {
-      "message": "Translating selected text"
+    "message": "Translating selected text"
   },
   "uiInstruction": {
-    "message": "Right-click on the selected text or a link to get a summary or translation."
+    "message": "Right-click on selected text or a link to get a summary or translation."
   }
 }
