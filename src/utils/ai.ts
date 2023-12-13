@@ -80,7 +80,7 @@ export class AI {
   }
 
   static async getFetchInfo(question: string) {
-    const accessToken = await AI.getToken();
+    const accessToken = await AI.getToken(); // TODO: Ahorrar peticion y guardar el token
     return {
       method: "POST",
       headers: {

@@ -78,6 +78,6 @@
     "message": "Translating selected text"
   },
   "uiInstruction": {
-    "message": "Right-click on selected text or a link to get a summary or translation."
+    "message": "Right-click on the selected text or on a link to obtain a summary or translation. It is mandatory to be logged into CHATGPT."
   }
 }

@@ -59,9 +59,9 @@ async function onTabClick(
     const response = await AI.requestInfo(prompt);
     await processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
     sendTabMessageActions(tabId, { type, data });
-  } catch (e) {
+  } catch (e: any) {
     sendTabMessageError(tabId, {
-      error: e instanceof Error ? e.message : "Error desconocido",
+      error: e instanceof Error ? e.message : e.toString(),
     });
   }
 }

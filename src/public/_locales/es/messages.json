@@ -78,6 +78,6 @@
     "message": "Traduciendo texto seleccionado"
   },
   "uiInstruction": {
-    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción."
+    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción. Es obligatorio estar logueado en CHATGPT."
   }
 }
