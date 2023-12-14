@@ -1,4 +1,3 @@
-- avisar desde el popup si estas logueado en chatGT o no
 - mejorar server
 - Añadir ads
 - App iphone android
