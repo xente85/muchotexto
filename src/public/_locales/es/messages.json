@@ -9,13 +9,16 @@
     "message": "Resumen del texto seleccionado"
   },
   "menuSelectionTraslate": {
-    "message": "Resumen del texto seleccionado"
+    "message": "Traducción del texto seleccionado"
   },
   "menuLink": {
     "message": "Resumen del artículo"
   },
   "menuPage": {
     "message": "Resumen de esta página"
+  },
+  "menuNoToken": {
+    "message": "Debes de estar logeado en CHATGPT"
   },
   "promptSummarize": {
     "message": "Resume este texto: '''$1'''"
@@ -78,6 +81,12 @@
     "message": "Traduciendo texto seleccionado"
   },
   "uiInstruction": {
-    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción. Es obligatorio estar logueado en CHATGPT."
+    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción."
+  },
+  "uiInstructionLoginOK": {
+    "message": "Conexión a ChatGTP correcta"
+  },
+  "uiInstructionLoginError": {
+    "message": "Debes iniciar sesión en <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a>"
   }
 }

@@ -1,12 +1,14 @@
 import { sleep } from "./utils";
 
 export class AI {
-  static requestInfo(question: string) {
+  private accessToken: string | null = null;
+
+  public requestInfo(question: string) {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await fetch(
           "https://chat.openai.com/backend-api/conversation",
-          await AI.getFetchInfo(question)
+          await this.getFetchInfo(question)
         );
         resolve(res.body);
       } catch (e) {
@@ -21,7 +23,56 @@ export class AI {
     });
   }
 
-  static uid() {
+  public getToken(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      if (this.accessToken) resolve(this.accessToken);
+
+      const resp = await fetch("https://chat.openai.com/api/auth/session");
+      if (resp.status === 403) {
+        reject("CLOUDFLARE");
+        this.accessToken = null;
+      }
+      try {
+        const data = await resp.json();
+        if (!data.accessToken) {
+          reject("ERROR");
+          this.accessToken = null;
+        }
+        this.accessToken = data.accessToken;
+        resolve(data.accessToken);
+      } catch (err) {
+        reject("ERROR");
+        this.accessToken = null;
+      }
+    });
+  }
+
+  private async getFetchInfo(question: string) {
+    return {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + (await this.getToken()),
+      },
+      body: JSON.stringify({
+        action: "next",
+        messages: [
+          {
+            id: this.uid(),
+            role: "user",
+            content: {
+              content_type: "text",
+              parts: [question],
+            },
+          },
+        ],
+        model: "text-davinci-002-render",
+        parent_message_id: this.uid(),
+      }),
+    };
+  }
+
+  private uid() {
     const generateNumber = (limit: number) => {
       const value = limit * Math.random();
       return value | 0;
@@ -59,49 +110,5 @@ export class AI {
       return result;
     };
     return generate();
-  }
-
-  static getToken() {
-    return new Promise(async (resolve, reject) => {
-      const resp = await fetch("https://chat.openai.com/api/auth/session");
-      if (resp.status === 403) {
-        reject("CLOUDFLARE");
-      }
-      try {
-        const data = await resp.json();
-        if (!data.accessToken) {
-          reject("ERROR");
-        }
-        resolve(data.accessToken);
-      } catch (err) {
-        reject("ERROR");
-      }
-    });
-  }
-
-  static async getFetchInfo(question: string) {
-    const accessToken = await AI.getToken(); // TODO: Ahorrar peticion y guardar el token
-    return {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      },
-      body: JSON.stringify({
-        action: "next",
-        messages: [
-          {
-            id: AI.uid(),
-            role: "user",
-            content: {
-              content_type: "text",
-              parts: [question],
-            },
-          },
-        ],
-        model: "text-davinci-002-render",
-        parent_message_id: AI.uid(),
-      }),
-    };
   }
 }

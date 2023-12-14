@@ -75,6 +75,15 @@
     height: 41px !important;
     width: 150px !important;
   }
+  .mt-instructions-login-chatgpt {
+    font-size: 0.8em;
+    &.ok {
+      color: green;
+    }
+    &.error {
+      color: red;
+    }
+  }
 }
 
 /* The Modal (background) */

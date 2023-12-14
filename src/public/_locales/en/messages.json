@@ -9,7 +9,7 @@
     "message": "Summary of selected text"
   },
   "menuSelectionTraslate": {
-    "message": "Summary of selected text"
+    "message": "Translation of the selected text"
   },
   "menuLink": {
     "message": "Article summary"
@@ -78,6 +78,12 @@
     "message": "Translating selected text"
   },
   "uiInstruction": {
-    "message": "Right-click on the selected text or on a link to obtain a summary or translation. It is mandatory to be logged into CHATGPT."
+    "message": "Right-click on the selected text or on a link to obtain a summary or translation."
+  },
+  "uiInstructionLoginOK": {
+    "message": "Connected to ChatGPT"
+  },
+  "uiInstructionLoginError": {
+      "message": "You must log in to <a target=\"_blank\" href=\"https://chat.openai.com/chat\">chat.openai.com</a>"
   }
 }

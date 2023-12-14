@@ -3,7 +3,9 @@ import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
 import { getArticle } from "./utils/utils";
 
-chrome.runtime.onInstalled.addListener(function () {
+const ai = new AI();
+
+chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     // title: chrome.i18n.getMessage("menuLink"),
     title: chrome.i18n.getMessage("menuLink"),
@@ -37,6 +39,25 @@ chrome.contextMenus.onClicked.addListener((event) => {
   });
 });
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.message === "isLoggedInChatGPT") {
+    (async () => {
+      // async code goes here
+      ai.getToken()
+        .then((token) => {
+          console.log(token);
+          sendResponse(true);
+        })
+        .catch(() => {
+          console.log("error");
+          sendResponse(false);
+        });
+    })();
+  }
+
+  return true;
+});
+
 async function onTabClick(
   tabId: number,
   event: chrome.contextMenus.OnClickData
@@ -56,7 +77,7 @@ async function onTabClick(
   try {
     const { type, data } = await getDataPrompt(tabId, event);
     const prompt = await prompts.getPrompt(type, data);
-    const response = await AI.requestInfo(prompt);
+    const response = await ai.requestInfo(prompt);
     await processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
     sendTabMessageActions(tabId, { type, data });
   } catch (e: any) {
