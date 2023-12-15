@@ -81,7 +81,7 @@
     "message": "Traduciendo texto seleccionado"
   },
   "uiInstruction": {
-    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción."
+    "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción. También puedes clickar en un enlace manteniendo presionada la tecla SHIFT para mostrar directamente el resumen."
   },
   "uiInstructionLoginOK": {
     "message": "Conexión a ChatGTP correcta"

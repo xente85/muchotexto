@@ -53,6 +53,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse(false);
         });
     })();
+  } else if (request.message === "link") {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (tabs.length > 0 && tabs[0].id) {
+        const tabId = tabs[0].id;
+        onTabClick(tabId, {
+          menuItemId: "link",
+          linkUrl: request.linkUrl,
+          editable: false,
+          pageUrl: request.linkUrl,
+        });
+      }
+    });
   }
 
   return true;

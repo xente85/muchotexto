@@ -27,3 +27,16 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
   ui.openModalText(data.text);
 });
+
+// Seleccionar todos los elementos <a> con la clase "miEnlace"
+const enlaces = document.querySelectorAll("a");
+enlaces.forEach(function (enlace) {
+  enlace.addEventListener("click", (event) => {
+    // Verificar si la tecla Shift está presionada
+    if (event.shiftKey) {
+      // Evitar el comportamiento predeterminado del enlace
+      event.preventDefault();
+      chrome.runtime.sendMessage({ message: "link", linkUrl: enlace.href });
+    }
+  });
+});
