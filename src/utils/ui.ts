@@ -14,8 +14,6 @@ export class UI {
     this.element.classList.add(this.prefixCSS);
     this.element.classList.add(`${this.prefixCSS}-modal`);
 
-    this.elementContent.classList.add(`${this.prefixCSS}-modal-content`);
-
     this.elementContent.innerHTML = `
       <span class="${this.prefixCSS}-modal-content-close">×</span>
       <div class="${this.prefixCSS}-modal-content-header">
@@ -53,7 +51,30 @@ export class UI {
 
     this.createListeners();
 
-    this.element.appendChild(this.elementContent);
+    const modalIframe = document.createElement("iframe");
+    modalIframe.id = `${this.prefixCSS}-modal-iframe`;
+    modalIframe.width = "100%";
+    modalIframe.height = "100%";
+    modalIframe.frameBorder = "0";
+    modalIframe.src = "data:text/html";
+
+    // Acceder al DOM del iframe
+    const iframeWindow = modalIframe.contentWindow;
+    if (iframeWindow) {
+      const iframeDocument = iframeWindow.document;
+      const linkElement = iframeDocument.createElement("link");
+      linkElement.rel = "stylesheet";
+      linkElement.type = "text/css";
+      linkElement.href = chrome.runtime.getURL("styles.css"); // Cambia esto con la URL de tu hoja de estilo
+      iframeDocument.head.appendChild(linkElement);
+      iframeDocument.body.appendChild(this.elementContent);
+    }
+
+    const modalContent = document.createElement("div");
+    modalContent.classList.add(`${this.prefixCSS}-modal-content`);
+
+    modalContent.appendChild(modalIframe);
+    this.element.appendChild(modalContent);
     document.body.appendChild(this.element);
 
     return this;
