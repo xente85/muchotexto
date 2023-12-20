@@ -2,7 +2,7 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function getArticle(link: string) {
+async function getArticle(link: string, controller: AbortController) {
   try {
     const response = await fetch(
       "https://article-extractor-api.onrender.com/",
@@ -14,6 +14,7 @@ async function getArticle(link: string) {
         body: JSON.stringify({
           link,
         }),
+        signal: controller.signal,
       }
     );
 

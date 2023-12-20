@@ -28,6 +28,10 @@ chrome.runtime.onMessage.addListener(async (request) => {
   ui.openModalText(data.text);
 });
 
+document.addEventListener("closeModal", () => {
+  chrome.runtime.sendMessage({ message: "stopRequest" });
+});
+
 // Seleccionar todos los elementos <a> con la clase "miEnlace"
 const enlaces = document.querySelectorAll("a");
 enlaces.forEach(function (enlace) {

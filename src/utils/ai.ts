@@ -3,16 +3,18 @@ import { sleep } from "./utils";
 export class AI {
   private accessToken: string | null = null;
 
-  public requestInfo(question: string) {
+  public requestInfo(question: string, controller: AbortController) {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await fetch(
           "https://chat.openai.com/backend-api/conversation",
-          await this.getFetchInfo(question)
+          await this.getFetchInfo(question, controller)
         );
         resolve(res.body);
       } catch (e) {
-        if (e === "CLOUDFLARE") {
+        if (e instanceof DOMException) {
+          reject(e);
+        } else if (e === "CLOUDFLARE") {
           reject(chrome.i18n.getMessage("errorReset"));
         } else {
           reject(chrome.i18n.getMessage("errorLogin"));
@@ -47,7 +49,7 @@ export class AI {
     });
   }
 
-  private async getFetchInfo(question: string) {
+  private async getFetchInfo(question: string, controller: AbortController) {
     return {
       method: "POST",
       headers: {
@@ -69,6 +71,7 @@ export class AI {
         model: "text-davinci-002-render",
         parent_message_id: this.uid(),
       }),
+      signal: controller.signal,
     };
   }
 

@@ -1,4 +1,6 @@
+- Llevar el modal a iframe evitar los estilos de la pagina actual
+- compartir/copiar
 - mejorar server
+--- cache de noticias
 - Añadir ads
 - App iphone android
-- Llevar el modal a iframe evitar los estilos de la pagina actual

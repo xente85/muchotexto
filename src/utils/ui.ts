@@ -1,11 +1,13 @@
 export class UI {
   private element: HTMLElement;
   private elementContent: HTMLElement;
+  private eventClose: Event;
   private prefixCSS: string;
 
   constructor(prefixCSS = "mt") {
     this.element = document.createElement("div");
     this.elementContent = document.createElement("div");
+    this.eventClose = new Event("closeModal");
     this.prefixCSS = prefixCSS;
   }
 
@@ -124,6 +126,12 @@ export class UI {
     this.closeModal();
   };
 
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.closeModal();
+    }
+  };
+
   private handleCloseClickStop = (event: MouseEvent) => {
     if (event) event.stopPropagation();
   };
@@ -139,6 +147,7 @@ export class UI {
     this.closeActions();
     this.closeLoading();
     this.closeResult();
+    document.dispatchEvent(this.eventClose);
   }
 
   public openModalTitle(data: any) {
@@ -208,6 +217,7 @@ export class UI {
 
     this.elementContent.addEventListener("click", this.handleCloseClickStop);
     window.addEventListener("click", this.handleCloseClick);
+    window.addEventListener("keydown", this.handleKeyDown);
   }
 
   private destroyListeners() {
@@ -218,6 +228,7 @@ export class UI {
 
     this.elementContent.removeEventListener("click", this.handleCloseClickStop);
     window.removeEventListener("click", this.handleCloseClick);
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   public destroy() {

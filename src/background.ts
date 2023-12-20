@@ -1,8 +1,10 @@
 import { AI } from "./utils/ai";
+import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
 import { getArticle } from "./utils/utils";
 
+const conexionController = new ConexionController();
 const ai = new AI();
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -44,12 +46,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       // async code goes here
       ai.getToken()
-        .then((token) => {
-          console.log(token);
+        .then(() => {
           sendResponse(true);
         })
         .catch(() => {
-          console.log("error");
           sendResponse(false);
         });
     })();
@@ -65,6 +65,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
       }
     });
+  } else if (request.message === "stopRequest") {
+    conexionController.abort();
   }
 
   return true;
@@ -87,12 +89,21 @@ async function onTabClick(
   )
     return;
   try {
-    const { type, data } = await getDataPrompt(tabId, event);
+    const { type, data } = await getDataPrompt(
+      tabId,
+      event,
+      conexionController.getController()
+    );
     const prompt = await prompts.getPrompt(type, data);
-    const response = await ai.requestInfo(prompt);
+    const response = await ai.requestInfo(
+      prompt,
+      conexionController.getController()
+    );
     await processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
     sendTabMessageActions(tabId, { type, data });
   } catch (e: any) {
+    if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
+      return;
     sendTabMessageError(tabId, {
       error: e instanceof Error ? e.message : e.toString(),
     });
@@ -101,7 +112,8 @@ async function onTabClick(
 
 async function getDataPrompt(
   tabId: number,
-  event: chrome.contextMenus.OnClickData
+  event: chrome.contextMenus.OnClickData,
+  controller: AbortController
 ) {
   const { menuItemId } = event;
 
@@ -118,10 +130,12 @@ async function getDataPrompt(
 
       sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
 
-      const article = await getArticle(event.linkUrl);
+      const article = await getArticle(event.linkUrl, controller);
 
       if (article === null || article.error) {
-        throw new Error(chrome.i18n.getMessage("errorArticulo"));
+        throw new Error(
+          article.error || chrome.i18n.getMessage("errorArticulo")
+        );
       }
 
       sendTabMessageTitle(tabId, {
@@ -182,7 +196,7 @@ async function getDataPrompt(
 
       sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingPage"));
 
-      const page = await getArticle(event.pageUrl);
+      const page = await getArticle(event.pageUrl, controller);
 
       if (page === null || page.error) {
         throw new Error(chrome.i18n.getMessage("errorPage"));
