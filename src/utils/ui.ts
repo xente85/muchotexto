@@ -3,12 +3,14 @@ export class UI {
   private elementContent: HTMLElement;
   private eventClose: Event;
   private prefixCSS: string;
+  private opened: boolean;
 
   constructor(prefixCSS = "mt") {
     this.element = document.createElement("div");
     this.elementContent = document.createElement("div");
     this.eventClose = new Event("closeModal");
     this.prefixCSS = prefixCSS;
+    this.opened = false;
   }
 
   public mount() {
@@ -139,15 +141,19 @@ export class UI {
   private openModal() {
     this.element.classList.remove("mt-modal-hide");
     this.element.classList.add("mt-modal-visible");
+    this.opened = true;
   }
 
   private closeModal() {
+    if (!this.opened) return;
+
     this.element.classList.remove("mt-modal-visible");
     this.element.classList.add("mt-modal-hide");
     this.closeActions();
     this.closeLoading();
     this.closeResult();
     document.dispatchEvent(this.eventClose);
+    this.opened = false;
   }
 
   public openModalTitle(data: any) {
