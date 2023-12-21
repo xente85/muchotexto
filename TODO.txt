@@ -1,3 +1,4 @@
+- Limpiar HTML del article extractor para no pasar tantos caracteres a ChatGPT
 - Llevar el modal a iframe evitar los estilos de la pagina actual
 - compartir/copiar
 - mejorar server
