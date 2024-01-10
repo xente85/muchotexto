@@ -4,6 +4,7 @@ export class UI {
   private eventClose: Event;
   private prefixCSS: string;
   private opened: boolean;
+  private speech: SpeechSynthesisUtterance | null;
 
   constructor(prefixCSS = "mt") {
     this.element = document.createElement("div");
@@ -11,6 +12,8 @@ export class UI {
     this.eventClose = new Event("closeModal");
     this.prefixCSS = prefixCSS;
     this.opened = false;
+    this.speech =
+      "speechSynthesis" in window ? new SpeechSynthesisUtterance() : null;
   }
 
   public mount() {
@@ -198,6 +201,7 @@ export class UI {
     const { type, data } = info;
     if (["article"].includes(type)) {
       const { url } = data;
+      this.addActionSpeech();
       this.addActionLink(url, "ir al artículo");
     }
     this.showActions();
@@ -308,7 +312,59 @@ export class UI {
       this.getElementContentActionsList().appendChild(actionElement);
   }
 
+  private addActionSpeech() {
+    if (!this.speech) return;
+
+    const textoLeer = "leémelo";
+    const textoParar = "para de leer";
+
+    const nuevoEnlace = document.createElement("a");
+    nuevoEnlace.href = "#";
+    nuevoEnlace.textContent = textoLeer;
+    nuevoEnlace.classList.add(`${this.prefixCSS}-modal-content-action-link`);
+    nuevoEnlace.onclick = () => {
+      if (nuevoEnlace.textContent === textoLeer) this.playSpeech();
+      if (nuevoEnlace.textContent === textoParar) this.stopSpeech();
+    };
+
+    // Evento cuando la síntesis de voz comienza
+    this.speech.onstart = () => {
+      nuevoEnlace.textContent = textoParar;
+    };
+
+    // Evento cuando la síntesis de voz se pausa
+    this.speech.onpause = () => {
+      nuevoEnlace.textContent = textoLeer;
+    };
+
+    this.speech.onend = () => {
+      nuevoEnlace.textContent = textoLeer;
+    };
+
+    this.speech.onerror = () => {
+      nuevoEnlace.textContent = "error de lectura";
+    };
+
+    this.getElementContentActionsList().appendChild(nuevoEnlace);
+  }
+
+  private playSpeech() {
+    if (!this.speech) return;
+    this.stopSpeech();
+
+    const text = this.getElementContentResultText().innerHTML;
+    this.speech.text = text;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(this.speech);
+  }
+
+  private stopSpeech() {
+    if (!this.speech) return;
+    speechSynthesis.pause();
+  }
+
   private removeActions() {
+    if (this.speech) speechSynthesis.cancel();
     this.getElementContentActionsList().innerHTML = "";
   }
 
