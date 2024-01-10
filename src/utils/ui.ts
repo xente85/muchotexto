@@ -51,7 +51,7 @@ export class UI {
         <div class="${this.prefixCSS}-modal-content-actions-wrapper">
           <div class="${this.prefixCSS}-modal-content-actions-list"></div>
           <div>
-            <a href="https://www.buymeacoffee.com/vicenalvaro" target="_blank">
+            <a href="https://www.buymeacoffee.com/xente" target="_blank">
               <img class="mt-buymecoffee" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
             </a>
           </div>
