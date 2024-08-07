@@ -21,16 +21,16 @@
     "message": "Debes de estar logeado en CHATGPT"
   },
   "promptSummarize": {
-    "message": "Resume este texto: '''$1'''"
+    "message": "Resume este texto: $1"
   },
   "promptArticle": {
-    "message": "Dame la respuesta directa a lo que se refiere el titular: '''$1'''"
+    "message": "Dame la respuesta directa a lo que se refiere el titular: $1"
   },
   "promptPage": {
-    "message": "Haz un breve resumen de esta página web con la información mas importante: '''$1'''"
+    "message": "Haz un breve resumen de esta página web con la información mas importante: $1"
   },
   "promptTranslate": {
-    "message": "Traduce este texto: '''$1'''"
+    "message": "Traduce este texto: $1"
   },
   "errorTemporal": {
     "message": "Algo salió mal. Por favor, inténtalo de nuevo en unos minutos: $1"

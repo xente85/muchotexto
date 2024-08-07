@@ -1,11 +1,9 @@
-import { AI } from "./utils/ai";
 import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
-import { getArticle } from "./utils/utils";
+import { getArticle, getResponseIA } from "./utils/utils";
 
 const conexionController = new ConexionController();
-const ai = new AI();
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -41,36 +39,6 @@ chrome.contextMenus.onClicked.addListener((event) => {
   });
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.message === "isLoggedInChatGPT") {
-    (async () => {
-      // async code goes here
-      ai.getToken()
-        .then(() => {
-          sendResponse(true);
-        })
-        .catch(() => {
-          sendResponse(false);
-        });
-    })();
-  } else if (request.message === "link") {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (tabs.length > 0 && tabs[0].id) {
-        const tabId = tabs[0].id;
-        onTabClick(tabId, {
-          menuItemId: "link",
-          linkUrl: request.linkUrl,
-          editable: false,
-          pageUrl: request.linkUrl,
-        });
-      }
-    });
-  } else if (request.message === "stopRequest") {
-    conexionController.abort();
-  }
-
-  return true;
-});
 
 async function onTabClick(
   tabId: number,
@@ -95,12 +63,14 @@ async function onTabClick(
       conexionController.getController()
     );
     const prompt = await prompts.getPrompt(type, data);
-    const response = await ai.requestInfo(
+    const response = await getResponseIA(
       prompt,
       conexionController.getController()
     );
-    await processStreamResponse(response as ReadableStream<Uint8Array>, tabId);
+
     sendTabMessageActions(tabId, { type, data });
+
+    sendTabMessageText(tabId, { text: response.response });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
@@ -216,43 +186,6 @@ async function getDataPrompt(
     }
     default: {
       throw new Error(chrome.i18n.getMessage("errorPromptUnkown"));
-    }
-  }
-}
-
-async function processStreamResponse(
-  response: ReadableStream<Uint8Array>,
-  tabId: number
-) {
-  const resRead = response.getReader();
-  while (true) {
-    const { done, value } = await resRead.read();
-    if (done) break;
-    if (done === undefined || value === undefined) {
-      sendTabMessageError(tabId, { error: "ERROR" });
-    }
-    const answer = new TextDecoder().decode(value);
-    try {
-      const res = await answer.split("data:");
-      try {
-        const detail = JSON.parse(res[0]).detail;
-        sendTabMessageText(tabId, { text: detail });
-      } catch (e) {
-        try {
-          const resTrim = res[1].trim();
-          if (resTrim === "[DONE]") return;
-          const answerJson = JSON.parse(resTrim);
-          let final = answerJson.message.content.parts[0];
-          final = final.replace(/\n/g, "<br>");
-          sendTabMessageText(tabId, { text: final });
-        } catch (e) {
-          // no se hacer nada
-        }
-      }
-    } catch (e: any) {
-      sendTabMessageError(tabId, {
-        error: chrome.i18n.getMessage("errorTemporal", [e]),
-      });
     }
   }
 }

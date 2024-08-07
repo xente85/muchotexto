@@ -18,16 +18,16 @@
     "message": "Summary of this page"
   },
   "promptSummarize": {
-    "message": "Summarize this text: '''$1'''"
+    "message": "Summarize this text: $1"
   },
   "promptArticle": {
-    "message": "Give a direct response to what the headline refers to: '''$1'''"
+    "message": "Give a direct response to what the headline refers to: $1"
   },
   "promptPage": {
-    "message": "Provide a brief summary of this webpage with the most important information: '''$1'''"
+    "message": "Provide a brief summary of this webpage with the most important information: $1"
   },
   "promptTranslate": {
-    "message": "Translate this text: '''$1'''"
+    "message": "Translate this text: $1"
   },
   "errorTemporal": {
     "message": "Something went wrong. Please try again in a few minutes: $1"

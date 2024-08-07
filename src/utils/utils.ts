@@ -2,17 +2,40 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const url = "https://vicenalvaro.alwaysdata.net/";
+const url = "http://localhost:3000/";
 
 async function getArticle(link: string, controller: AbortController) {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(url + "link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         link,
+      }),
+      signal: controller.signal,
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('result', result);
+      return result;
+    }
+  } catch (err) {
+    return { error: `Error: ${err}` };
+  }
+}
+
+async function getResponseIA(prompt: string, controller: AbortController) {
+  try {
+    const response = await fetch(url + "prompt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
       }),
       signal: controller.signal,
     });
@@ -26,4 +49,4 @@ async function getArticle(link: string, controller: AbortController) {
   }
 }
 
-export { sleep, getArticle };
+export { sleep, getArticle, getResponseIA };
