@@ -63,14 +63,18 @@ async function onTabClick(
       conexionController.getController()
     );
     const prompt = await prompts.getPrompt(type, data);
+    /*
     const response = await getResponseIA(
       prompt,
       conexionController.getController()
     );
+    */
+
+    // await navigator.clipboard.writeText(prompt);
 
     sendTabMessageActions(tabId, { type, data });
 
-    sendTabMessageText(tabId, { text: response.response });
+    sendTabMessageText(tabId, { text: prompt });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
