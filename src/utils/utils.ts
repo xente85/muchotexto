@@ -2,7 +2,8 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const url = "http://localhost:3000/";
+// const url = "http://localhost:3000/";
+const url = "https://muchotexto-api.onrender.com/";
 
 async function getArticle(link: string, controller: AbortController) {
   try {

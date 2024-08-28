@@ -72,9 +72,10 @@ async function onTabClick(
 
     // await navigator.clipboard.writeText(prompt);
 
-    sendTabMessageActions(tabId, { type, data });
+    // sendTabMessageActions(tabId, { type, data });
+    sendTabMessageAction(tabId, { type: "copyToTheClipboard", data: { text: prompt, infoText: 'Prompt listo para pegar en ChatGPT.' } });
 
-    sendTabMessageText(tabId, { text: prompt });
+    // sendTabMessageText(tabId, { text: prompt });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
@@ -218,4 +219,8 @@ function sendTabMessageError(tabId: number, data: any) {
 
 function sendTabMessageActions(tabId: number, data: any) {
   sendTabMessage(tabId, "actions", data);
+}
+
+function sendTabMessageAction(tabId: number, data: any) {
+  sendTabMessage(tabId, "action", data);
 }

@@ -25,6 +25,15 @@ chrome.runtime.onMessage.addListener(async (request) => {
     return;
   }
 
+  if (type === "action") {
+    if (data.type === 'copyToTheClipboard') {
+      const { text, infoText } = data.data;
+      navigator.clipboard.writeText(text);
+      ui.openModalText(infoText);
+    }
+    return;
+  }
+
   ui.openModalText(data.text);
 });
 
