@@ -68,14 +68,12 @@ async function onTabClick(
       prompt,
       conexionController.getController()
     );
+    sendTabMessageActions(tabId, { type, data });
     */
 
-    // await navigator.clipboard.writeText(prompt);
-
-    // sendTabMessageActions(tabId, { type, data });
     sendTabMessageAction(tabId, { type: "copyToTheClipboard", data: { text: prompt, infoText: 'Prompt listo para pegar en ChatGPT.' } });
 
-    // sendTabMessageText(tabId, { text: prompt });
+    if (["article", "page"].includes(type)) sendTabMessageText(tabId, { text: data.content });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
