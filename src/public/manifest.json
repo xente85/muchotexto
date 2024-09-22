@@ -3,12 +3,14 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
   "version": "1.0.0",
-  "host_permissions": ["https://*.openai.com/"],
+  "host_permissions": ["https://*.openai.com/", "https://chatgpt.com/"],
   "permissions": [
     "storage",
     "tabs",
     "contextMenus",
-    "clipboardWrite"
+    "clipboardWrite",
+    "activeTab",
+    "scripting"
   ],
   "default_locale": "en",
   "icons": {

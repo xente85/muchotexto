@@ -1,7 +1,7 @@
 import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
-import { getArticle, getResponseIA } from "./utils/utils";
+import { getArticle, getResponseIATab } from "./utils/utils";
 
 const conexionController = new ConexionController();
 
@@ -63,17 +63,15 @@ async function onTabClick(
       conexionController.getController()
     );
     const prompt = await prompts.getPrompt(type, data);
-    /*
-    const response = await getResponseIA(
+    const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
+    const response = await getResponseIATab(
+      tabId,
+      idChat,
       prompt,
       conexionController.getController()
     );
     sendTabMessageActions(tabId, { type, data });
-    */
-
-    sendTabMessageAction(tabId, { type: "copyToTheClipboard", data: { text: prompt, infoText: 'Prompt listo para pegar en ChatGPT.' } });
-
-    if (["article", "page"].includes(type)) sendTabMessageText(tabId, { text: data.content });
+    sendTabMessageText(tabId, { text: response });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
