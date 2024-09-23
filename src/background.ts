@@ -3,6 +3,8 @@ import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
 import { getArticle, getResponseIATab } from "./utils/utils";
 
+const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
+
 const conexionController = new ConexionController();
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -63,7 +65,6 @@ async function onTabClick(
       conexionController.getController()
     );
     const prompt = await prompts.getPrompt(type, data);
-    const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
     const response = await getResponseIATab(
       tabId,
       idChat,
