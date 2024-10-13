@@ -13,7 +13,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.css'],
   },
   module: {
     rules: [
@@ -22,6 +22,18 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/,  // Procesar archivos .css
+        use: [
+          {
+            loader: 'css-loader',
+            options: {
+              // Activar la opción para obtener el CSS como string (es necesario)
+              modules: false
+            }
+          }
+        ]
+      }
     ],
   },
   plugins: [

@@ -1,3 +1,5 @@
+import styles from "../public/styleShadow.css"; // Importar el CSS como un string
+
 export class UI {
   private element: HTMLElement;
   private elementContent: HTMLElement;
@@ -12,25 +14,32 @@ export class UI {
     this.eventClose = new Event("closeModal");
     this.prefixCSS = prefixCSS;
     this.opened = false;
-    this.speech =
-      "speechSynthesis" in window ? new SpeechSynthesisUtterance() : null;
+    this.speech = "speechSynthesis" in window ? new SpeechSynthesisUtterance() : null;
   }
 
   public mount() {
+    // Crear el shadow root
+    const shadowRoot = this.element.attachShadow({ mode: 'open' });
+    
+    // Crear el elemento <style>
+    const styleElement = document.createElement('style');
+  
+    // Agregar el CSS en línea o dinámicamente
+    styleElement.textContent = `${styles}`;
+
+    // Asignar id y clases al elemento
     this.element.id = `${this.prefixCSS}-modal`;
     this.element.classList.add(this.prefixCSS);
     this.element.classList.add(`${this.prefixCSS}-modal`);
 
+    // Agregar clases al contenido del modal
     this.elementContent.classList.add(`${this.prefixCSS}-modal-content`);
 
+    // Definir el contenido HTML del modal, incluyendo un bloque de estilos dentro del shadow DOM
     this.elementContent.innerHTML = `
       <span class="${this.prefixCSS}-modal-content-close">×</span>
       <div class="${this.prefixCSS}-modal-content-header">
-        <img class="${
-          this.prefixCSS
-        }-modal-content-header-logo" src="${chrome.runtime.getURL(
-      "assets/icons/icon.png"
-    )}" alt="Mucho texto">
+        <img class="${this.prefixCSS}-modal-content-header-logo" src="${chrome.runtime.getURL("assets/icons/icon.png")}" alt="Mucho texto">
         <div class="${this.prefixCSS}-modal-content-header-wrapper-title">
           <h2 class="${this.prefixCSS}-modal-content-header-subtitle"></h2>
           <h1 class="${this.prefixCSS}-modal-content-header-title"></h1>
@@ -58,9 +67,14 @@ export class UI {
         </div>
       </div>`;
 
+    // Crear los listeners necesarios
     this.createListeners();
 
-    this.element.appendChild(this.elementContent);
+    // Adjuntar el contenido al shadow root
+    shadowRoot.appendChild(styleElement);
+    shadowRoot.appendChild(this.elementContent);
+    
+    // Finalmente, agregar el modal al cuerpo del documento
     document.body.appendChild(this.element);
 
     return this;

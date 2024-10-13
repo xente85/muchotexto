@@ -1,7 +1,7 @@
 import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
-import { getArticle, getResponseIATab } from "./utils/utils";
+import { getArticle, getResponseIA, getResponseIATab } from "./utils/utils";
 
 const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
 
@@ -65,14 +65,20 @@ async function onTabClick(
       conexionController.getController()
     );
     const prompt = await prompts.getPrompt(type, data);
+    /*
     const response = await getResponseIATab(
       tabId,
       idChat,
       prompt,
       conexionController.getController()
     );
+    */
+    const response = await getResponseIA(
+      prompt,
+      conexionController.getController()
+    );
     sendTabMessageActions(tabId, { type, data });
-    sendTabMessageText(tabId, { text: response });
+    sendTabMessageText(tabId, { text: response.response });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;

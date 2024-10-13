@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+:root {
+  --mt-font-family: "Roboto", sans-serif;
+  --mt-font-size: 18px;
+  --mt-font-color: #0c0c0c;
+  --mt-font-color-secondary: #999;
+  --mt-font-color-error: red;
+  --mt-bg-color: #ffffff;
+}
+
+.mt {
+  h1,
+  h2,
+  p {
+    font-family: var(--mt-font-family);
+    color: var(--mt-font-color);
+    margin-top: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-left: 0;
+    padding-bottom: 0;
+    padding-right: 0;
+  }
+}
+
+.mt-text-center {
+  text-align: center;
+}
+
+.mt-text-justify {
+  text-align: justify;
+}
+
+.mt-pt {
+  padding-top: 20px !important;
+}
+
+.mt-mt {
+  margin-top: 20px !important;
+}
+
+.mt-my {
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+}
+
+.mt-modal-visible {
+  display: block !important;
+}
+
+.mt-modal-hide {
+  display: none !important;
+}
+
+.mt-modal-content {
+background-color: var(--mt-bg-color);
+margin: 15% auto; /* 15% from the top and centered */
+padding: 20px;
+border: 1px solid #888;
+border-radius: 5px;
+width: 80%; /* Could be more or less, depending on screen size */
+max-width: 700px;
+font-size: 1em;
+
+/* The Close Button */
+.mt-modal-content-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.mt-modal-content-close:hover,
+.mt-modal-content-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.mt-modal-content-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .mt-modal-content-header-title {
+    font-size: 1.3em;
+    line-height: normal;
+    margin-top: 5px;
+    font-family: var(--mt-font-family);
+
+    &.link {
+        white-space: nowrap; /* Evita el desbordamiento de línea */
+        overflow: hidden; /* Oculta el texto que no cabe */
+        text-overflow: ellipsis; /* Muestra puntos suspensivos (...) al final del texto truncado */
+    }
+
+    &.selection {
+        font-style: italic;
+
+        &::before {
+        content: open-quote;
+        }
+
+        &::after {
+        content: close-quote;
+        }
+    }
+    }
+
+    .mt-modal-content-header-subtitle {
+    line-height: normal;
+    margin-top: 5px;
+    font-size: 0.6em;
+    text-transform: uppercase;
+    font-family: var(--mt-font-family);
+    color: var(--mt-font-color-secondary);
+    }
+
+    --mt-logo-w: 100px;
+    --mt-logo-h: 100px;
+    .mt-modal-content-header-logo {
+    width: var(--mt-logo-w);
+    height: var(--mt-logo-h);
+    }
+    .mt-modal-content-header-wrapper-title {
+    width: calc(100% - var(--mt-logo-w));
+    }
+}
+
+.mt-modal-content-main {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fcfafa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    .mt-modal-content-result {
+    .mt-modal-content-result-text {
+        font-size: 0.9em;
+        font-family: var(--mt-font-family);
+        line-height: 1.5em;
+        &.mt-error {
+        color: var(--mt-font-color-error);
+        font-weight: bold;
+        }
+    }
+    }
+}
+
+.mt-modal-content-actions {
+    margin-top: 20px;
+
+    .mt-modal-content-actions-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .mt-modal-content-actions-list {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .mt-modal-content-action-link {
+        cursor: pointer;
+        text-decoration: underline;
+        color: var(--mt-font-color);
+        font-size: 0.9em;
+        font-family: var(--mt-font-family);
+        &:hover {
+            font-weight: bold;
+        }
+        }
+    }
+    }
+
+    .mt-buymecoffee {
+    height: 41px !important;
+    width: 150px !important;
+    }
+}
+
+.mt-modal-content-loading {
+    padding: 50px;
+    text-align: center;
+    .mt-modal-content-loading-text {
+    margin-top: 20px;
+    font-size: 0.8em;
+    font-style: italic;
+    text-align: center;
+    font-family: var(--mt-font-family);
+    color: var(--mt-font-color-secondary);
+
+    &::after {
+        content: "...";
+    }
+    }
+    .mt-modal-content-loading-loader {
+    .mt-loader {
+        margin: 0 auto;
+
+        /* Spinner size and color */
+        width: 1.5em;
+        height: 1.5em;
+        border-top-color: var(--mt-font-color);
+        border-left-color: var(--mt-font-color);
+
+        /* Additional spinner styles */
+        animation: spinner 1s linear infinite;
+        border-bottom-color: transparent;
+        border-right-color: transparent;
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 50%;
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    }
+}
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
