@@ -118,7 +118,7 @@ export class UI {
     this.getElementContentLoadingText().innerHTML = "";
   }
 
-  private showResult(text: string) {
+  private showResult(text: string, chatHistory?: [] | undefined) {
     this.getElementContentResult().classList.remove(
       `${this.prefixCSS}-modal-hide`
     );
@@ -263,10 +263,10 @@ export class UI {
     this.openModal();
   }
 
-  public openModalText(resumen: string) {
+  public openModalText(resumen: string, chatHistory?: [] | undefined) {
     this.closeLoading();
     this.closeActions();
-    this.showResult(resumen);
+    this.showResult(resumen, chatHistory);
     this.showInput();
     this.getElementContentResultText().classList.remove(
       `${this.prefixCSS}-error`

@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
     return;
   }
 
-  ui.openModalText(data.text);
+  ui.openModalText(data.text, data.chatHistory);
 });
 
 document.addEventListener("closeModal", () => {

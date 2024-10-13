@@ -54,7 +54,7 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
       prompt,
       conexionController.getController()
     );
-    sendTabMessageText(tabId, { text: chatHistory.pop().content });
+    sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory });
   }
 });
 
@@ -97,7 +97,7 @@ async function onTabClick(
       conexionController.getController()
     );
     sendTabMessageActions(tabId, { type, data: { ...data, idChat } });
-    sendTabMessageText(tabId, { text: chatHistory.pop().content });
+    sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
