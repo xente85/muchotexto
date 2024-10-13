@@ -7,6 +7,7 @@ export class UI {
   private prefixCSS: string;
   private opened: boolean;
   private speech: SpeechSynthesisUtterance | null;
+  private idChat: String;
 
   constructor(prefixCSS = "mt") {
     this.element = document.createElement("div");
@@ -15,6 +16,7 @@ export class UI {
     this.prefixCSS = prefixCSS;
     this.opened = false;
     this.speech = "speechSynthesis" in window ? new SpeechSynthesisUtterance() : null;
+    this.idChat = "";
   }
 
   public mount() {
@@ -54,6 +56,22 @@ export class UI {
         </div>
         <div class="${this.prefixCSS}-modal-content-result">
           <p class="${this.prefixCSS}-modal-content-result-text"></p>
+        </div>
+        <div class="${this.prefixCSS}-modal-content-input">
+          <form id="${this.prefixCSS}-modal-form" class="${this.prefixCSS}-modal-form" aria-label="Formulario de entrada">
+            <input 
+              type="text" 
+              id="${this.prefixCSS}-input-field" 
+              class="${this.prefixCSS}-input-field" 
+              placeholder="¿Alguna pregunta?" 
+              required
+            />
+            <button 
+              type="submit" 
+              class="${this.prefixCSS}-submit-button">
+              Enviar
+            </button>
+          </form>
         </div>
       </div>
       <div class="${this.prefixCSS}-modal-content-actions">
@@ -122,6 +140,24 @@ export class UI {
     this.closeActions();
   }
 
+  private showInput() {
+    this.getElementContentInput().classList.remove(
+      `${this.prefixCSS}-modal-hide`
+    );
+    this.getElementContentInput().classList.add(
+      `${this.prefixCSS}-modal-visible`
+    );
+  }
+
+  private closeInput() {
+    this.getElementContentInput().classList.remove(
+      `${this.prefixCSS}-modal-visible`
+    );
+    this.getElementContentInput().classList.add(
+      `${this.prefixCSS}-modal-hide`
+    );
+  }
+
   private showActions() {
     this.getElementContentActions().classList.remove(
       `${this.prefixCSS}-modal-hide`
@@ -155,6 +191,30 @@ export class UI {
     if (event) event.stopPropagation();
   };
 
+  private handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault(); // Evita el envío predeterminado del formulario
+
+    const inputField = this.getElementContentInputField() as HTMLInputElement;
+
+    if (inputField) {
+      const inputValue = inputField.value; // Captura el valor del input
+      console.log("Valor ingresado:", inputValue);
+
+      // Aquí puedes hacer algo con el valor, como enviarlo a tu API
+      // Por ejemplo:
+      this.sendDataToApi(inputValue);
+      
+      // Opcional: Limpiar el campo de entrada después de capturarlo
+      inputField.value = '';
+    }
+  };
+
+  // Método para enviar datos a la API
+  private sendDataToApi(inputValue: string) {
+    // Lógica para enviar el valor a tu API
+    chrome.runtime.sendMessage({ action: 'reply', idChat: this.idChat, prompt: inputValue });
+  }
+
   private openModal() {
     this.element.classList.remove("mt-modal-hide");
     this.element.classList.add("mt-modal-visible");
@@ -169,6 +229,7 @@ export class UI {
     this.closeActions();
     this.closeLoading();
     this.closeResult();
+    this.closeInput();
     document.dispatchEvent(this.eventClose);
     this.opened = false;
   }
@@ -197,6 +258,7 @@ export class UI {
 
   public openModalLoading(text: string) {
     this.closeResult();
+    this.closeInput();
     this.showLoading(text);
     this.openModal();
   }
@@ -205,6 +267,7 @@ export class UI {
     this.closeLoading();
     this.closeActions();
     this.showResult(resumen);
+    this.showInput();
     this.getElementContentResultText().classList.remove(
       `${this.prefixCSS}-error`
     );
@@ -213,6 +276,9 @@ export class UI {
 
   public openModalActions(info: any) {
     const { type, data } = info;
+
+    this.idChat = data.idChat;
+
     if (["article"].includes(type)) {
       const { url } = data;
       this.addActionSpeech();
@@ -234,6 +300,14 @@ export class UI {
   }
 
   private createListeners() {
+    const form = this.getElementContentForm();
+    if (form) {
+      form.addEventListener(
+        "submit",
+        this.handleSubmit
+      );
+    }
+
     this.getElementContentCloseBtn().addEventListener(
       "click",
       this.handleCloseClick
@@ -245,6 +319,15 @@ export class UI {
   }
 
   private destroyListeners() {
+    const form = this.getElementContentForm();
+
+    if (form) {
+      form.removeEventListener(
+        "submit",
+        this.handleSubmit
+      );
+    }
+    
     this.getElementContentCloseBtn().removeEventListener(
       "click",
       this.handleCloseClick
@@ -298,6 +381,27 @@ export class UI {
   private getElementContentResultText() {
     return this.elementContent.getElementsByClassName(
       `${this.prefixCSS}-modal-content-result-text`
+    )[0];
+  }
+
+  private getElementContentInput() {
+    return this.elementContent.getElementsByClassName(
+      `${this.prefixCSS}-modal-content-input`
+    )[0];
+  }
+
+  private getElementContentForm() {
+    return this.elementContent.querySelector('form');
+    /*
+    return this.elementContent.getElementsByClassName(
+      `${this.prefixCSS}-modal-form`
+    )[0];
+    */
+  }
+
+  private getElementContentInputField() {
+    return this.elementContent.getElementsByClassName(
+      `${this.prefixCSS}-input-field`
     )[0];
   }
 

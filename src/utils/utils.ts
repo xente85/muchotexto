@@ -5,6 +5,14 @@ function sleep(ms: number) {
 const url = "http://localhost:3000/";
 // const url = "https://muchotexto-api.onrender.com/";
 
+function getNewIdChat() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0; // Genera un número aleatorio entre 0 y 15
+    const v = c === 'x' ? r : (r & 0x3 | 0x8); // Ajusta el número según el formato de UUID
+    return v.toString(16); // Devuelve el valor en formato hexadecimal
+  });
+}
+
 async function getArticle(link: string, controller: AbortController) {
   try {
     const response = await fetch(url + "link", {
@@ -28,7 +36,7 @@ async function getArticle(link: string, controller: AbortController) {
   }
 }
 
-async function getResponseIA(prompt: string, controller: AbortController) {
+async function getResponseIA(idChat: string, prompt: string, controller: AbortController) {
   try {
     const response = await fetch(url + "prompt", {
       method: "POST",
@@ -37,6 +45,7 @@ async function getResponseIA(prompt: string, controller: AbortController) {
       },
       body: JSON.stringify({
         prompt,
+        idChat,
       }),
       signal: controller.signal,
     });
@@ -206,4 +215,4 @@ function sendMessageToChatGPT(message: string) {
   */
 }
 
-export { sleep, getArticle, getResponseIA, getResponseIATab };
+export { sleep, getArticle, getResponseIA, getResponseIATab, getNewIdChat };

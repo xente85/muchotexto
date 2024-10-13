@@ -52,7 +52,7 @@ function devOnClick(
 
       sendTabMessageActions(tabId, {
         type: "selection",
-        data: { selection: true },
+        data: { selection: true, idChat: "xxxx" },
       });
     } else if (menuId === "testLoading") {
       sendTabMessageTitle(tabId, {
@@ -74,7 +74,7 @@ function devOnClick(
 
       sendTabMessageActions(tabId, {
         type: "article",
-        data: { article: true },
+        data: { article: true, idChat: "xxxx" },
       });
     } else if (menuId === "testError") {
       sendTabMessageTitle(tabId, {

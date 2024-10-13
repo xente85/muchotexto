@@ -77,6 +77,9 @@
   "uiLoadingSelectionTraslate": {
     "message": "Translating selected text"
   },
+  "uiLoadingReply": {
+    "message": "Waiting response"
+  },
   "uiInstruction": {
     "message": "Right-click on selected text or on a link to obtain a summary or translation. You can also click on a link while holding down the SHIFT key to directly display the summary."
   },

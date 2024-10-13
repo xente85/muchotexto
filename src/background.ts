@@ -1,7 +1,7 @@
 import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
-import { getArticle, getResponseIA, getResponseIATab } from "./utils/utils";
+import { getArticle, getResponseIA, getResponseIATab, getNewIdChat } from "./utils/utils";
 
 const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
 
@@ -41,6 +41,22 @@ chrome.contextMenus.onClicked.addListener((event) => {
   });
 });
 
+chrome.runtime.onMessage.addListener(async (request, sender) => {
+  if (!sender.tab || !sender.tab.id) return;
+
+  const { action, idChat, prompt } = request;
+
+  const tabId = sender.tab.id;
+  if (action === 'reply') {
+    sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingReply"));
+    const { chatHistory } = await getResponseIA(
+      idChat, 
+      prompt,
+      conexionController.getController()
+    );
+    sendTabMessageText(tabId, { text: chatHistory.pop().content });
+  }
+});
 
 async function onTabClick(
   tabId: number,
@@ -73,12 +89,15 @@ async function onTabClick(
       conexionController.getController()
     );
     */
-    const response = await getResponseIA(
+    const idChat = getNewIdChat();
+
+    const { chatHistory } = await getResponseIA(
+      idChat, 
       prompt,
       conexionController.getController()
     );
-    sendTabMessageActions(tabId, { type, data });
-    sendTabMessageText(tabId, { text: response.response });
+    sendTabMessageActions(tabId, { type, data: { ...data, idChat } });
+    sendTabMessageText(tabId, { text: chatHistory.pop().content });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
@@ -201,6 +220,7 @@ async function getDataPrompt(
 function sendTabMessage(tabId: number, type: string, data: any = {}) {
   chrome.tabs.sendMessage(tabId, { type, data });
 }
+
 function sendTabMessageLoading(
   tabId: number,
   text: string = chrome.i18n.getMessage("uiLoading")
