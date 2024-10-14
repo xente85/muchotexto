@@ -198,7 +198,7 @@ export class UI {
 
     if (inputField) {
       const inputValue = inputField.value; // Captura el valor del input
-      console.log("Valor ingresado:", inputValue);
+      // console.log("Valor ingresado:", inputValue);
 
       // Aquí puedes hacer algo con el valor, como enviarlo a tu API
       // Por ejemplo:
