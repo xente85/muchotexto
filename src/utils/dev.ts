@@ -52,6 +52,7 @@ function devOnClick(
           { role: 'user', content: 'Ejemplo prompt' },
           { role: 'assistant', content: 'Respuesta prompt' }
         ],
+        keepActions: true
       });
 
       sendTabMessageActions(tabId, {
@@ -74,6 +75,11 @@ function devOnClick(
 
       sendTabMessageText(tabId, {
         text: "Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.",
+        chatHistory: [
+          { role: 'user', content: 'Ejemplo prompt' },
+          { role: 'assistant', content: 'Respuesta prompt' }
+        ],
+        keepActions: true
       });
 
       sendTabMessageActions(tabId, {

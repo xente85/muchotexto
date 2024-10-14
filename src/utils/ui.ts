@@ -263,9 +263,9 @@ export class UI {
     this.openModal();
   }
 
-  public openModalText(resumen: string, chatHistory?: [] | undefined) {
+  public openModalText(resumen: string, chatHistory?: [] | undefined, keepActions?: boolean | undefined) {
     this.closeLoading();
-    this.closeActions();
+    if (!keepActions) this.closeActions();
     this.showResult(resumen, chatHistory);
     this.showInput();
     this.getElementContentResultText().classList.remove(
