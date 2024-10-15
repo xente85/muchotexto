@@ -2,8 +2,9 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const url = "http://localhost:3000/";
+// const url = "http://localhost:3000/";
 // const url = "https://muchotexto-api.onrender.com/";
+const url = "https://muchotexto-api-production.up.railway.app/";
 
 function getNewIdChat() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
