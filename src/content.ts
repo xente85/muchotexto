@@ -23,3 +23,16 @@ app.mount(appContainer);
 
 // Finalmente, agregar el shadowHost al DOM
 document.body.appendChild(shadowHost);
+
+// Seleccionar todos los elementos <a> con la clase "miEnlace"
+const enlaces = document.querySelectorAll("a");
+enlaces.forEach((enlace) =>  {
+  enlace.addEventListener("click", (event) => {
+    // Verificar si la tecla Shift está presionada
+    if (event.shiftKey) {
+      // Evitar el comportamiento predeterminado del enlace
+      event.preventDefault();
+      chrome.runtime.sendMessage({ message: "link", linkUrl: enlace.href });
+    }
+  });
+});

@@ -1,5 +1,5 @@
 <template>
-  <div id="mt-modal" class="mt-modal" v-show="opened">
+  <div id="mt-modal" class="mt-modal" :class="classMt" v-show="opened">
     <div class="mt-modal-content">
       <span class="mt-modal-content-close" @click="closeModal">×</span>
       <div class="mt-modal-content-header">
@@ -10,17 +10,17 @@
         </div>
       </div>
       <div class="mt-modal-content-main">
-        <div v-if="loading" class="mt-modal-content-loading">
+        <div v-show="loading" class="mt-modal-content-loading">
           <div class="mt-modal-content-loading-loader">
             <div class="mt-loader"></div>
           </div>
           <p class="mt-modal-content-loading-text">{{ loadingText }}</p>
         </div>
-        <div v-if="resultVisible" class="mt-modal-content-result">
-          <p class="mt-modal-content-result-text">{{ resultText }}</p>
+        <div v-show="resultVisible" class="mt-modal-content-result">
+          <div class="mt-modal-content-result-text" v-html="resultText" />
         </div>
-        <div class="mt-modal-content-input">
-          <form @submit.prevent="handleSubmit" aria-label="Formulario de entrada">
+        <div v-show="resultVisible" class="mt-modal-content-input">
+          <form @submit.prevent="handleSubmit" aria-label="Formulario de entrada" class="mt-modal-form">
             <input 
               type="text" 
               id="mt-input-field" 
@@ -33,7 +33,7 @@
           </form>
         </div>
       </div>
-      <div class="mt-modal-content-actions">
+      <div v-show="resultVisible" class="mt-modal-content-actions">
         <div class="mt-modal-content-actions-wrapper">
           <div class="mt-modal-content-actions-list"></div>
           <div>
@@ -50,13 +50,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-// Props del componente
-const props = defineProps<{}>();
-
-const emit = defineEmits<{
-  (event: 'closeModal'): void;
-}>();
-
 // Variables estaticas
 const iconSrc = chrome.runtime.getURL("assets/icons/icon.png");
 
@@ -69,9 +62,11 @@ const subtitle = ref('');
 const loadingText = ref('');
 const resultText = ref('');
 const inputValue = ref('');
+const classMt = ref({});
+const idChat = ref('');
 
 // Métodos del componente
-const openModalTitle = (data: any) => {
+const setTitle = (data: any) => {
   const maxCaractersTitle = 400;
   if (!data.isLink && data.title.length > maxCaractersTitle) {
     const textTruncated = data.title.substring(0, maxCaractersTitle) + "...";
@@ -82,18 +77,28 @@ const openModalTitle = (data: any) => {
 
   title.subtitle = data.subtitle;
 
-  // if (data.isLink) this.getElementContentTitle().classList.add("link");
-  // else this.getElementContentTitle().classList.remove("link");
+  if (data.isLink) classMt.value.link = true;
+  else classMt.value.link = false;
 
-  // if (data.isSelection) this.getElementContentTitle().classList.add("selection");
-  // else this.getElementContentTitle().classList.remove("selection");
-
-  openModal();
+  if (data.isSelection) classMt.value.selection = true;
+  else classMt.value.selection = false;
 };
 
-const openModalLoading = (text) => {
-  showLoading(text);
-  openModal();
+const showLoading = (text) => {
+  loading.value = true;
+  loadingText.value = text;
+}
+
+const showError = (error: string) => {
+  classMt.value.error = true;
+  showInfo(error);
+}
+
+const showResult = (text) => {
+  classMt.value.error = false;
+  closeLoading();
+  // if (!keepActions) closeActions();
+  showInfo(text);
 }
 
 const openModal = () => {
@@ -102,7 +107,7 @@ const openModal = () => {
 
 const closeModal = () => {
   opened.value = false;
-  emit('closeModal');
+  chrome.runtime.sendMessage({ action: 'modalClosed' });
   resetStates(); // Resetea los estados al cerrar
 };
 
@@ -122,13 +127,7 @@ const handleSubmit = () => {
 
 // Enviar datos a la API
 const sendDataToApi = (inputValue: string) => {
-  chrome.runtime.sendMessage({ action: 'reply', prompt: inputValue });
-};
-
-// Otras funciones para mostrar y ocultar contenido
-const showLoading = (text: string) => {
-  loading.value = true;
-  loadingText.value = text;
+  chrome.runtime.sendMessage({ action: 'reply', idChat: idChat.value, prompt: inputValue });
 };
 
 const closeLoading = () => {
@@ -136,74 +135,72 @@ const closeLoading = () => {
   loadingText.value = '';
 };
 
-const showResult = (text: string) => {
+const showInfo = (text: string) => {
   resultVisible.value = true;
   resultText.value = text;
 };
 
-const closeResult = () => {
+const closeInfo = () => {
   resultVisible.value = false;
   resultText.value = '';
 };
 
-// Watch para controlar la apertura y cierre del modal
-watch(opened, (newValue) => {
-  if (newValue) {
-    // Aquí puedes manejar la lógica adicional al abrir el modal
-  }
-});
+const showActions = (info) => {
+  const { type, data } = info;
 
+  idChat.value = data.idChat;
+
+  // TODO
+  /*
+  if (["article"].includes(type)) {
+    const { url } = data;
+    this.addActionSpeech();
+    this.addActionLink(url, "ir al artículo");
+  }
+  */
+}
 
 chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
 
+  openModal();
+
   if (type === "title") {
-    openModalTitle(data);
+    setTitle(data);
     return;
   }
 
   if (type === "loading") {
-    openModalLoading(data.text);
+    closeInfo();
+    showLoading(data.text);
     return;
   }
 
   if (type === "error") {
-    openModalError(data.error);
+    closeLoading();
+    showError(data.error);
     return;
   }
 
   if (type === "actions") {
-    openModalActions(data);
+    closeLoading();
+    showActions(data);
     return;
   }
 
   if (type === "action") {
+    closeLoading();
     if (data.type === 'copyToTheClipboard') {
       const { text, infoText } = data.data;
-      navigator.clipboard.writeText(text);
-      openModalText(infoText);
+      navigator.clipboard.writeText(text);(infoText);
+      showInfo(infoText);
     }
     return;
   }
 
-  openModalText(data.text, data.chatHistory, data.keepActions);
-});
-
-document.addEventListener("closeModal", () => {
-  chrome.runtime.sendMessage({ message: "stopRequest" });
-});
-
-// Seleccionar todos los elementos <a> con la clase "miEnlace"
-const enlaces = document.querySelectorAll("a");
-enlaces.forEach(function (enlace) {
-  enlace.addEventListener("click", (event) => {
-    // Verificar si la tecla Shift está presionada
-    if (event.shiftKey) {
-      // Evitar el comportamiento predeterminado del enlace
-      event.preventDefault();
-      chrome.runtime.sendMessage({ message: "link", linkUrl: enlace.href });
-    }
-  });
+  openModal();
+  closeLoading();
+  showResult(data.text, data.chatHistory, data.keepActions);
 });
 
 </script>

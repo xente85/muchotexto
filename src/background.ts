@@ -55,6 +55,8 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
       conexionController.getController()
     );
     sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory, keepActions: true });
+  } else if (action === 'modalClosed') {
+    conexionController.abort();
   }
 });
 
