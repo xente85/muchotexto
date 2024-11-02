@@ -1,21 +1,29 @@
 {
   "compilerOptions": {
-    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "ESNext",                                  /* Specify what module code is generated. */
-    "rootDir": "./",                                     /* Specify the root folder within your source files. */
-    "outDir": "dist",                                   /* Specify an output folder for all emitted files. */
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-    "strict": true,                                      /* Enable all strict type-checking options. */
-    "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
-
-    "moduleResolution": "node",        // Asegúrate de usar la resolución de módulos de Node
-    "resolveJsonModule": true,         // (opcional) Si usas archivos JSON
-    "allowSyntheticDefaultImports": true, // Permite importaciones de estilo CommonJS
-    "isolatedModules": true,           // Requerido para React, por ejemplo
-    "noEmit": false,
-    // "target": "es6"
+    "target": "ESNext",                                  /* Usa ESNext para compatibilidad con las últimas características de JavaScript. */
+    "module": "ESNext",                                  /* Genera módulos en formato ESNext, compatible con Vue 3. */
+    "rootDir": "./src",                                  /* Define el directorio raíz de los archivos fuente. */
+    "outDir": "./dist",                                  /* Carpeta de salida para los archivos compilados. */
+    "moduleResolution": "node",                          /* Usa la resolución de módulos de Node. */
+    "esModuleInterop": true,                             /* Habilita la interoperabilidad de módulos CommonJS. */
+    "allowSyntheticDefaultImports": true,                /* Permite importaciones de estilo CommonJS. */
+    "forceConsistentCasingInFileNames": true,            /* Asegura que los nombres de archivos respeten las mayúsculas y minúsculas. */
+    "strict": true,                                      /* Habilita todas las verificaciones estrictas de tipos. */
+    "skipLibCheck": true,                                /* Omite la verificación de tipos en archivos de declaración. */
+    "resolveJsonModule": true,                           /* Permite la importación de archivos JSON. */
+    "isolatedModules": true,                             /* Asegura que cada archivo se trate como un módulo independiente. */
+    "noEmit": false,                                     /* Emite los archivos compilados. */
+    "lib": ["dom", "esnext"],                            /* Incluye las bibliotecas de DOM y ESNext. */
+    "types": ["node", "vue", "chrome"]                   /* Incluye los tipos para Node y Vue. */
   },
-  "include": ["src/**/*", "global.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",                                          /* Incluye todos los archivos en src. */
+    "src/**/*.vue",                                      /* Incluye archivos .vue en src. */
+    "src/shims-vue.d.ts",
+    "global.d.ts"                                        /* Incluye definiciones de tipos globales si las tienes. */
+  ],
+  "exclude": [
+    "node_modules",                                      /* Excluye la carpeta node_modules. */
+    "dist"                                               /* Excluye la carpeta dist. */
+  ]
 }

@@ -1,55 +1,25 @@
-import { UI } from "./utils/ui";
+import { createApp } from 'vue';
+import App from './components/App.vue'; // Importa el componente App.vue
+import css from "./components/app.css"; // Importar el CSS como un string
 
-const ui = new UI().mount();
+// Crear un div para el Shadow DOM
+const shadowHost = document.createElement('div');
+const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+const styleElement = document.createElement('style');
+styleElement.textContent = css;
 
-chrome.runtime.onMessage.addListener(async (request) => {
-  const { type, data } = request;
+// Crear un contenedor dentro del ShadowRoot
+const appContainer = document.createElement('div');
 
-  if (type === "title") {
-    ui.openModalTitle(data);
-    return;
-  }
+// Añadir el contenedor al ShadowRoot
+shadowRoot.appendChild(styleElement);
+shadowRoot.appendChild(appContainer);
 
-  if (type === "loading") {
-    ui.openModalLoading(data.text);
-    return;
-  }
+// Crear la instancia de la aplicación Vue y montarla en el DOM
+const app = createApp(App); // Pasa las props aquí
 
-  if (type === "error") {
-    ui.openModalError(data.error);
-    return;
-  }
+// Montar la aplicación en el contenedor dentro del Shadow DOM
+app.mount(appContainer);
 
-  if (type === "actions") {
-    ui.openModalActions(data);
-    return;
-  }
-
-  if (type === "action") {
-    if (data.type === 'copyToTheClipboard') {
-      const { text, infoText } = data.data;
-      navigator.clipboard.writeText(text);
-      ui.openModalText(infoText);
-    }
-    return;
-  }
-
-  ui.openModalText(data.text, data.chatHistory, data.keepActions);
-});
-
-document.addEventListener("closeModal", () => {
-  chrome.runtime.sendMessage({ message: "stopRequest" });
-});
-
-// Seleccionar todos los elementos <a> con la clase "miEnlace"
-const enlaces = document.querySelectorAll("a");
-enlaces.forEach(function (enlace) {
-  enlace.addEventListener("click", (event) => {
-    // Verificar si la tecla Shift está presionada
-    if (event.shiftKey) {
-      // Evitar el comportamiento predeterminado del enlace
-      event.preventDefault();
-      chrome.runtime.sendMessage({ message: "link", linkUrl: enlace.href });
-    }
-  });
-});
+// Finalmente, agregar el shadowHost al DOM
+document.body.appendChild(shadowHost);
