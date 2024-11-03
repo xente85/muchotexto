@@ -2,6 +2,11 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+function isHyperlink(text: string): boolean {
+  const urlPattern = /^(https?:\/\/|www\.)[^\s/$.?#].[^\s]*$/i;
+  return urlPattern.test(text);
+}
+
 // const url = "http://localhost:3000/";
 // const url = "https://muchotexto-api.onrender.com/";
 const url = "https://muchotexto-api-production.up.railway.app/";
@@ -216,4 +221,4 @@ function sendMessageToChatGPT(message: string) {
   */
 }
 
-export { sleep, getArticle, getResponseIA, getResponseIATab, getNewIdChat };
+export { sleep, isHyperlink, getArticle, getResponseIA, getResponseIATab, getNewIdChat };
