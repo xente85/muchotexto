@@ -38,6 +38,10 @@
   padding-top: 20px !important;
 }
 
+.mt-bt {
+  border-top: 1px solid #ccc;
+}
+
 .mt-mt {
   margin-top: 20px !important;
 }
@@ -45,6 +49,10 @@
 .mt-my {
   margin-top: 20px !important;
   margin-bottom: 20px !important;
+}
+
+.mt-cursiva {
+  font-style: italic;
 }
 
 .mt-modal {

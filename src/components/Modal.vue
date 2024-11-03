@@ -16,11 +16,17 @@
           </div>
           <p class="mt-modal-content-loading-text">{{ loadingText }}</p>
         </div>
-        <template v-if="!loading && !isError">
+        <template v-if="!loading">
           <div class="mt-modal-content-result">
-            <div class="mt-modal-content-result-text" v-html="text" />
+            <div
+              v-for="(item, index) in info"
+              :key="index"
+              class="mt-modal-content-result-text"
+              :class="{ 'mt-bt': index > 0, 'mt-mt': index > 0, 'mt-pt': index > 0, 'mt-cursiva': index % 2 !== 0 }"
+              v-html="item.text"
+            />
           </div>
-          <div class="mt-modal-content-input">
+          <div v-if="!isError" class="mt-modal-content-input">
             <form @submit.prevent="handleSubmit" aria-label="Formulario de entrada" class="mt-modal-form">
               <input 
                 type="text" 
@@ -52,6 +58,7 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, computed } from 'vue';
 import { isHyperlink } from '../utils/utils';
+import { Info } from './interfaces'
 
 // Props
 const props = defineProps<{
@@ -61,7 +68,7 @@ const props = defineProps<{
   subtitle: string;
   loading: boolean;
   loadingText: string;
-  text: string;
+  info: Array<Info>;
   isError: boolean;
 }>();
 
@@ -82,7 +89,7 @@ const titleIsLink = computed(() => {
 const titleAdapted = computed(() => {
   const maxCaractersTitle = 400;
 
-  if (!titleIsLink && props.title.length > maxCaractersTitle) {
+  if (!titleIsLink.value && props.title.length > maxCaractersTitle) {
     const textTruncated = props.title.substring(0, maxCaractersTitle) + "...";
     return textTruncated;
   }
@@ -93,7 +100,7 @@ const titleAdapted = computed(() => {
 const extraClass = computed(() => {
   return {
     error: props.isError,
-    link: titleIsLink,
+    link: titleIsLink.value,
   };
 });
 

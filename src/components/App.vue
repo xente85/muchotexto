@@ -1,12 +1,12 @@
 <template>
-  <Modal 
+  <Modal
     :opened="opened"
     :iconUrl="iconUrl"
     :title="title"
     :subtitle="subtitle"
     :loading="loading"
     :loadingText="loadingText"
-    :text="textInfo"
+    :info="modalInfo"
     :isError="isError"
     @closeModal="closeModal"
     @submit="sendDataToApi"
@@ -17,6 +17,9 @@
 import Modal from './Modal.vue';
 import { ref } from 'vue';
 
+// Interface
+import { Info } from './interfaces'
+
 // Variables estaticas
 const iconUrl = chrome.runtime.getURL("assets/icons/icon.png");
 
@@ -26,7 +29,7 @@ const title = ref('');
 const subtitle = ref('');
 const loading = ref(false);
 const loadingText = ref('');
-const textInfo = ref('');
+const modalInfo = ref<Array<Info>>([]);
 const isError = ref(false);
 const idChat = ref('');
 
@@ -52,18 +55,26 @@ const closeLoading = () => {
 
 const showError = (error: string) => {
   isError.value = true;
-  showInfo(error);
+  showInfo([{ info: 'error', date: '', text: error }]);
 }
 
-const showResult = (text: string) => {
+const showResult = (data: any) => {
   isError.value = false;
-  showInfo(text);
+
+  let result = [{ info: 'assistant', date: '', text: data.text }];
+  if (data.chatHistory && data.chatHistory.length > 1) {
+    const chatHistory = data.chatHistory.slice(1);
+    const chat = chatHistory.map((c: any) => ({ info: c.role, date: '', text: c.content }));
+    result = [...chat, ...result];
+  }
+
+  showInfo(result);
 }
 
-const showInfo = (text: string) => {
+const showInfo = (info: Array<Info>) => {
   openModal();
   closeLoading();
-  textInfo.value = text;
+  modalInfo.value = info;
 };
 
 const sendDataToApi = (inputValue: string) => {
@@ -94,6 +105,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
     return;
   }
 
-  showResult(data.text);
+  showResult(data);
 });
 </script>
