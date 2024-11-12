@@ -105,7 +105,9 @@ const extraClass = computed(() => {
 });
 
 // Metodos
-const closeModal = () => {
+const closeModal = (e: Event) => {
+  e.preventDefault();
+  e.stopPropagation();
   emit('closeModal');
 };
 

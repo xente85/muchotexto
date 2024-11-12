@@ -15,6 +15,11 @@ const appContainer = document.createElement('div');
 shadowRoot.appendChild(styleElement);
 shadowRoot.appendChild(appContainer);
 
+// Detener la propagación de clics desde el Shadow DOM
+appContainer.addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
 // Crear la instancia de la aplicación Vue y montarla en el DOM
 const app = createApp(App); // Pasa las props aquí
 
@@ -24,14 +29,16 @@ app.mount(appContainer);
 // Finalmente, agregar el shadowHost al DOM
 document.body.appendChild(shadowHost);
 
-// Seleccionar todos los elementos <a> con la clase "miEnlace"
-const enlaces = document.querySelectorAll("a");
+// Seleccionar todos los elementos <a> con la clase "miEnlace" fuera del shadowHost
+const enlaces = document.querySelectorAll("a:not(#" + shadowHost.id + " a)") as NodeListOf<HTMLAnchorElement>;
+
 enlaces.forEach((enlace) =>  {
-  enlace.addEventListener("click", (event) => {
+  enlace.addEventListener("click", (event: Event) => {
+    const mouseEvent = event as MouseEvent;
     // Verificar si la tecla Shift está presionada
-    if (event.shiftKey) {
+    if (mouseEvent.shiftKey) {
       // Evitar el comportamiento predeterminado del enlace
-      event.preventDefault();
+      mouseEvent.preventDefault();
       chrome.runtime.sendMessage({ message: "link", linkUrl: enlace.href });
     }
   });

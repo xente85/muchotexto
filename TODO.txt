@@ -1,8 +1,4 @@
-- Llevar el modal a iframe evitar los estilos de la pagina actual (shadowDOM)
 - Store chatID
 - compartir/copiar
-- mejorar server
---- modelo de ia
---- cache de noticias
 - Añadir ads
 - App iphone android
