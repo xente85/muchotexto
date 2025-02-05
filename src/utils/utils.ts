@@ -7,9 +7,9 @@ function isHyperlink(text: string): boolean {
   return urlPattern.test(text);
 }
 
-// const url = "http://localhost:3000/";
+const url = "http://localhost:3000/";
 // const url = "https://muchotexto-api.onrender.com/";
-const url = "https://muchotexto-api-production.up.railway.app/";
+// const url = "https://muchotexto-api-production.up.railway.app/";
 
 function getNewIdChat() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
