@@ -24,7 +24,7 @@
     "message": "Resume este texto: $1"
   },
   "promptArticle": {
-    "message": "Dame la respuesta directa a lo que se refiere el titular: $1"
+    "message": "Lee el siguiente titular y el contenido de la noticia. Luego, responde de forma directa, clara y concisa a lo que realmente significa o revela el titular (evita rodeos o frases promocionales): $1"
   },
   "promptPage": {
     "message": "Haz un breve resumen de esta página web con la información mas importante: $1"
