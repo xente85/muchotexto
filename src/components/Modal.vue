@@ -22,7 +22,7 @@
               v-for="(item, index) in info"
               :key="index"
               class="mt-modal-content-result-text"
-              :class="{ 'mt-bt': index > 0, 'mt-mt': index > 0, 'mt-pt': index > 0, 'mt-cursiva': index % 2 !== 0 }"
+              :class="resultItemClasses(index)"
               v-html="item.text"
             />
           </div>
@@ -103,6 +103,17 @@ const extraClass = computed(() => {
     link: titleIsLink.value,
   };
 });
+
+const resultItemClasses = (index: number | string) => {
+  const itemIndex = Number(index);
+
+  return {
+    'mt-bt': itemIndex > 0,
+    'mt-mt': itemIndex > 0,
+    'mt-pt': itemIndex > 0,
+    'mt-cursiva': itemIndex % 2 !== 0,
+  };
+};
 
 // Metodos
 const closeModal = (e: Event) => {
