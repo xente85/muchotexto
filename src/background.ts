@@ -49,13 +49,21 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
 
   const tabId = sender.tab.id;
   if (action === 'reply') {
-    sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingReply"));
-    const { chatHistory } = await getResponseIA(
-      idChat, 
-      prompt,
-      conexionController.getController()
-    );
-    sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory, keepActions: true });
+    try {
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingReply"));
+      const { chatHistory } = await getResponseIA(
+        idChat,
+        prompt,
+        conexionController.getController()
+      );
+      sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory, keepActions: true });
+    } catch (e: any) {
+      if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
+        return;
+      sendTabMessageError(tabId, {
+        error: e instanceof Error ? e.message : e.toString(),
+      });
+    }
   } else if (action === 'modalClosed') {
     conexionController.abort();
   } else if (action === 'link') {

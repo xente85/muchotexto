@@ -56,12 +56,20 @@ async function getResponseIA(idChat: string, prompt: string, controller: AbortCo
       signal: controller.signal,
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      return result;
+    const result = await response.json();
+    if (!response.ok || result.error) {
+      throw new Error(result.error || `Error HTTP ${response.status}`);
     }
+
+    const reply = result.chatHistory?.[result.chatHistory.length - 1]?.content;
+    if (typeof reply !== 'string' || !reply.trim()) {
+      throw new Error('El proveedor de IA no devolvió ninguna respuesta.');
+    }
+
+    return result;
   } catch (err) {
-    return { error: `Error: ${err}` };
+    if (err instanceof Error) throw err;
+    throw new Error(`Error: ${err}`);
   }
 }
 
