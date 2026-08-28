@@ -43,7 +43,7 @@
               :key="index"
               class="mt-modal-content-result-text"
               :class="resultItemClasses(index)"
-              v-html="item.text"
+              v-html="formatMessage(item)"
             />
           </div>
           <div v-if="!isError" class="mt-modal-content-input">
@@ -158,6 +158,21 @@ const resultItemClasses = (index: number | string) => {
     'mt-pt': itemIndex > 0,
     'mt-cursiva': itemIndex % 2 !== 0,
   };
+};
+
+const formatMessage = (item: Info) => {
+  if (item.info !== 'assistant') return item.text;
+
+  const escapedText = item.text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+  return escapedText
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
 };
 
 // Metodos
