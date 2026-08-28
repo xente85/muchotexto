@@ -198,6 +198,11 @@
           font-size: 0.9em;
           font-family: var(--mt-font-family);
           line-height: 1.5em;
+
+          strong {
+            font-weight: 700;
+          }
+
           &.mt-error {
             color: var(--mt-font-color-error);
             font-weight: bold;
