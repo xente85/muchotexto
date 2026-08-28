@@ -80,6 +80,24 @@
   "uiLoadingReply": {
     "message": "Waiting response"
   },
+  "uiOriginalText": {
+    "message": "Original text"
+  },
+  "uiCopy": {
+    "message": "Copy"
+  },
+  "uiCopied": {
+    "message": "Copied"
+  },
+  "uiShowMore": {
+    "message": "Show all"
+  },
+  "uiShowLess": {
+    "message": "Hide"
+  },
+  "uiOriginalArticle": {
+    "message": "Open original article"
+  },
   "uiInstruction": {
     "message": "Right-click on selected text or on a link to obtain a summary or translation. You can also click on a link while holding down the SHIFT key to directly display the summary."
   },

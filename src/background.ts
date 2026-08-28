@@ -110,7 +110,13 @@ async function onTabClick(
       prompt,
       conexionController.getController()
     );
-    sendTabMessageActions(tabId, { type, data: { ...data, idChat } });
+    sendTabMessageActions(tabId, {
+      type,
+      data: {
+        idChat,
+        sourceUrl: ["article", "page"].includes(type) ? data.sourceUrl : undefined,
+      },
+    });
     sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory, keepActions: true });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
@@ -164,15 +170,19 @@ async function getDataPrompt(
         chrome.i18n.getMessage("uiLoadingArticleSummary")
       );
 
-      return { type: "article", data: article };
+      return {
+        type: "article",
+        data: { ...article, sourceUrl: event.linkUrl },
+      };
     }
     case "selection": {
       if (!event.selectionText)
         throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
 
       sendTabMessageTitle(tabId, {
-        title: event.selectionText,
-        subtitle: chrome.i18n.getMessage("menuSelection"),
+        title: chrome.i18n.getMessage("menuSelection"),
+        subtitle: "",
+        originalText: event.selectionText,
         isSelection: true,
       });
 
@@ -188,8 +198,9 @@ async function getDataPrompt(
         throw new Error(chrome.i18n.getMessage("errorPromptSelection"));
 
       sendTabMessageTitle(tabId, {
-        title: event.selectionText,
-        subtitle: chrome.i18n.getMessage("menuSelectionTraslate"),
+        title: chrome.i18n.getMessage("menuSelectionTraslate"),
+        subtitle: "",
+        originalText: event.selectionText,
         isSelection: true,
       });
 
@@ -233,7 +244,10 @@ async function getDataPrompt(
         chrome.i18n.getMessage("uiLoadingPageSummary")
       );
 
-      return { type: "page", data: page };
+      return {
+        type: "page",
+        data: { ...page, sourceUrl: event.pageUrl },
+      };
     }
     default: {
       throw new Error(chrome.i18n.getMessage("errorPromptUnkown"));

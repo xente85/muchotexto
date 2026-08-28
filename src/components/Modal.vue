@@ -17,6 +17,26 @@
           <p class="mt-modal-content-loading-text">{{ loadingText }}</p>
         </div>
         <template v-if="!loading">
+          <section v-if="originalText" class="mt-modal-content-original">
+            <div class="mt-modal-content-original-header">
+              <strong>{{ originalTextLabel }}</strong>
+              <button type="button" class="mt-modal-content-original-copy" @click="copyOriginalText">
+                {{ originalCopied ? copiedLabel : copyLabel }}
+              </button>
+            </div>
+            <p
+              class="mt-modal-content-original-text"
+              :class="{ expanded: originalExpanded }"
+            >{{ originalText }}</p>
+            <button
+              v-if="originalTextCanExpand"
+              type="button"
+              class="mt-modal-content-original-toggle"
+              @click="originalExpanded = !originalExpanded"
+            >
+              {{ originalExpanded ? showLessLabel : showMoreLabel }}
+            </button>
+          </section>
           <div class="mt-modal-content-result">
             <div
               v-for="(item, index) in info"
@@ -43,7 +63,15 @@
       </div>
       <div class="mt-modal-content-actions">
         <div class="mt-modal-content-actions-wrapper">
-          <div class="mt-modal-content-actions-list"></div>
+          <div class="mt-modal-content-actions-list">
+            <a
+              v-if="sourceUrl"
+              :href="sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-modal-content-action-link"
+            >{{ originalArticleLabel }}</a>
+          </div>
           <div>
             <a href="https://www.buymeacoffee.com/xente" target="_blank">
               <img class="mt-buymecoffee" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
@@ -56,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { isHyperlink } from '../utils/utils';
 import { Info } from './interfaces'
 
@@ -66,6 +94,8 @@ const props = defineProps<{
   iconUrl: string;
   title: string;
   subtitle: string;
+  originalText: string;
+  sourceUrl: string;
   loading: boolean;
   loadingText: string;
   info: Array<Info>;
@@ -80,6 +110,14 @@ const emit = defineEmits<{
 
 // Data
 const inputValue = ref('');
+const originalExpanded = ref(false);
+const originalCopied = ref(false);
+const originalTextLabel = chrome.i18n.getMessage('uiOriginalText');
+const copyLabel = chrome.i18n.getMessage('uiCopy');
+const copiedLabel = chrome.i18n.getMessage('uiCopied');
+const showMoreLabel = chrome.i18n.getMessage('uiShowMore');
+const showLessLabel = chrome.i18n.getMessage('uiShowLess');
+const originalArticleLabel = chrome.i18n.getMessage('uiOriginalArticle');
 
 // Computed
 const titleIsLink = computed(() => {
@@ -95,6 +133,13 @@ const titleAdapted = computed(() => {
   }
   
   return props.title;
+});
+
+const originalTextCanExpand = computed(() => props.originalText.length > 300);
+
+watch(() => props.originalText, () => {
+  originalExpanded.value = false;
+  originalCopied.value = false;
 });
 
 const extraClass = computed(() => {
@@ -125,5 +170,17 @@ const closeModal = (e: Event) => {
 const handleSubmit = () => {
   emit('submit', inputValue.value);
   inputValue.value = '';
+};
+
+const copyOriginalText = async () => {
+  try {
+    await navigator.clipboard.writeText(props.originalText);
+    originalCopied.value = true;
+    window.setTimeout(() => {
+      originalCopied.value = false;
+    }, 1500);
+  } catch {
+    originalCopied.value = false;
+  }
 };
 </script>

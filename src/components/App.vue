@@ -4,6 +4,8 @@
     :iconUrl="iconUrl"
     :title="title"
     :subtitle="subtitle"
+    :originalText="originalText"
+    :sourceUrl="sourceUrl"
     :loading="loading"
     :loadingText="loadingText"
     :info="modalInfo"
@@ -27,6 +29,8 @@ const iconUrl = chrome.runtime.getURL("assets/icons/icon.png");
 const opened = ref(false);
 const title = ref('');
 const subtitle = ref('');
+const originalText = ref('');
+const sourceUrl = ref('');
 const loading = ref(false);
 const loadingText = ref('');
 const modalInfo = ref<Array<Info>>([]);
@@ -87,6 +91,8 @@ chrome.runtime.onMessage.addListener(async (request) => {
   if (type === 'title') {
     title.value = data.title;
     subtitle.value = data.subtitle;
+    originalText.value = data.originalText || '';
+    sourceUrl.value = '';
     return;
   }
 
@@ -102,6 +108,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
   if (type === 'actions') {
     idChat.value = data.data.idChat;
+    sourceUrl.value = data.data.sourceUrl || '';
     return;
   }
 

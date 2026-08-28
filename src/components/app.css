@@ -136,6 +136,63 @@
       border: 1px solid #ccc;
       border-radius: 5px;
 
+      .mt-modal-content-original {
+        margin-bottom: 20px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: var(--mt-bg-color);
+
+        .mt-modal-content-original-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          margin-bottom: 8px;
+          font-family: var(--mt-font-family);
+          font-size: 0.8em;
+          color: var(--mt-font-color-secondary);
+        }
+
+        .mt-modal-content-original-text {
+          display: -webkit-box;
+          overflow: hidden;
+          margin: 0;
+          font-family: var(--mt-font-family);
+          font-size: 0.8em;
+          line-height: 1.45em;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+
+          &.expanded {
+            display: block;
+            max-height: 260px;
+            overflow-y: auto;
+          }
+        }
+
+        .mt-modal-content-original-copy,
+        .mt-modal-content-original-toggle {
+          padding: 0;
+          border: 0;
+          background: none;
+          color: var(--mt-font-color-secondary);
+          cursor: pointer;
+          font-family: var(--mt-font-family);
+          text-decoration: underline;
+
+          &:hover {
+            color: var(--mt-font-color);
+          }
+        }
+
+        .mt-modal-content-original-toggle {
+          margin-top: 8px;
+        }
+      }
+
       .mt-modal-content-result {
         .mt-modal-content-result-text {
           font-size: 0.9em;
