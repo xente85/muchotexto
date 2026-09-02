@@ -1,10 +1,22 @@
 import { ConexionController } from "./utils/conexionController";
 import { devMenu, devOnClick } from "./utils/dev";
 import { prompts } from "./utils/prompt";
-import { getArticle, getResponseIA, getResponseIATab, getNewIdChat } from "./utils/utils";
+import { getArticle, getResponseIA, getFactCheck, getResponseIATab, getNewIdChat } from "./utils/utils";
 
 const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
 const ARTICLE_PROTECTED_CODE = "ARTICLE_PROTECTED";
+
+function factCheckLog(event: string, details: any = {}) {
+  console.log(`[MuchoTexto][fact-check] ${event}`, details);
+}
+
+function getUrlDomain(url?: string) {
+  try {
+    return url ? new URL(url).hostname : "unknown";
+  } catch {
+    return "invalid";
+  }
+}
 
 const conexionController = new ConexionController();
 
@@ -29,6 +41,16 @@ chrome.runtime.onInstalled.addListener(() => {
     title: chrome.i18n.getMessage("menuPage"),
     id: "summarizePage",
   });
+  chrome.contextMenus.create({
+    title: chrome.i18n.getMessage("menuVerifyLink"),
+    contexts: ["link"],
+    id: "verifyLink",
+  });
+  chrome.contextMenus.create({
+    title: chrome.i18n.getMessage("menuVerifyPage"),
+    contexts: ["page"],
+    id: "verifyPage",
+  });
 
   devMenu();
 });
@@ -45,7 +67,7 @@ chrome.contextMenus.onClicked.addListener((event) => {
 chrome.runtime.onMessage.addListener(async (request, sender) => {
   if (!sender.tab || !sender.tab.id) return;
 
-  const { action, idChat, prompt } = request;
+  const { action, idChat, prompt, sourceUrl } = request;
 
   const tabId = sender.tab.id;
   if (action === 'reply') {
@@ -64,6 +86,16 @@ chrome.runtime.onMessage.addListener(async (request, sender) => {
         error: e instanceof Error ? e.message : e.toString(),
       });
     }
+  } else if (action === 'factCheck') {
+    if (!sourceUrl) {
+      sendTabMessageError(tabId, { error: chrome.i18n.getMessage("errorPromptArticle") });
+      return;
+    }
+    conexionController.abort();
+    onTabClick(tabId, {
+      menuItemId: "verifyLink",
+      linkUrl: sourceUrl,
+    } as chrome.contextMenus.OnClickData);
   } else if (action === 'modalClosed') {
     conexionController.abort();
   } else if (action === 'link') {
@@ -76,6 +108,13 @@ async function onTabClick(
   tabId: number,
   event: chrome.contextMenus.OnClickData
 ) {
+  const isFactCheck = ["verifyLink", "verifyPage"].includes(event.menuItemId.toString());
+  if (isFactCheck) {
+    factCheckLog("action.clicked", {
+      action: event.menuItemId.toString(),
+      sourceDomain: getUrlDomain(event.linkUrl || event.pageUrl),
+    });
+  }
   if (
     devOnClick(
       tabId,
@@ -94,7 +133,6 @@ async function onTabClick(
       event,
       conexionController.getController()
     );
-    const prompt = await prompts.getPrompt(type, data);
     /*
     const response = await getResponseIATab(
       tabId,
@@ -104,23 +142,29 @@ async function onTabClick(
     );
     */
     const idChat = getNewIdChat();
-
-    const { chatHistory } = await getResponseIA(
-      idChat, 
-      prompt,
-      conexionController.getController()
-    );
+    const controller = conexionController.getController();
+    const { chatHistory } = ["factCheckArticle", "factCheckPage"].includes(type)
+      ? await getFactCheck(idChat, data, controller)
+      : await getResponseIA(idChat, await prompts.getPrompt(type, data), controller);
     sendTabMessageActions(tabId, {
       type,
       data: {
         idChat,
-        sourceUrl: ["article", "page"].includes(type) ? data.sourceUrl : undefined,
+        sourceUrl: ["article", "page", "factCheckArticle", "factCheckPage"].includes(type)
+          ? data.sourceUrl
+          : undefined,
       },
     });
     sendTabMessageText(tabId, { text: chatHistory.pop().content, chatHistory, keepActions: true });
   } catch (e: any) {
     if (e instanceof Error && e.message.toUpperCase().includes("ABORTED"))
       return;
+    if (isFactCheck) {
+      console.error("[MuchoTexto][fact-check] action.failed", {
+        action: event.menuItemId.toString(),
+        message: e instanceof Error ? e.message : String(e),
+      });
+    }
     sendTabMessageError(tabId, {
       error: e instanceof Error ? e.message : e.toString(),
     });
@@ -154,9 +198,9 @@ async function getDataPrompt(
         article = await getArticleFromBackgroundTab(event.linkUrl);
       }
 
-      if (article === null || article.error) {
+      if (!article || article.error) {
         throw new Error(
-          article.error || chrome.i18n.getMessage("errorArticulo")
+          article?.error || chrome.i18n.getMessage("errorArticulo")
         );
       }
 
@@ -172,6 +216,44 @@ async function getDataPrompt(
 
       return {
         type: "article",
+        data: { ...article, sourceUrl: event.linkUrl },
+      };
+    }
+    case "verifyLink": {
+      if (!event.linkUrl)
+        throw new Error(chrome.i18n.getMessage("errorPromptArticle"));
+
+      sendTabMessageTitle(tabId, {
+        title: event.linkUrl,
+        subtitle: chrome.i18n.getMessage("menuVerifyLink"),
+        isLink: true,
+      });
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingArticle"));
+      factCheckLog("article.extraction.started", {
+        mode: "link",
+        sourceDomain: getUrlDomain(event.linkUrl),
+      });
+
+      let article = await getArticle(event.linkUrl, controller);
+      if (article?.code === ARTICLE_PROTECTED_CODE) {
+        factCheckLog("article.extraction.fallback", { reason: ARTICLE_PROTECTED_CODE });
+        sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingProtectedArticle"));
+        article = await getArticleFromBackgroundTab(event.linkUrl);
+      }
+      factCheckLog("article.extraction.completed", {
+        articleChars: article.content?.length || article.textContent?.length || 0,
+      });
+      if (!article || article.error) {
+        throw new Error(article?.error || chrome.i18n.getMessage("errorArticulo"));
+      }
+
+      sendTabMessageTitle(tabId, {
+        title: article.title,
+        subtitle: chrome.i18n.getMessage("menuVerifyLink"),
+      });
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingFactCheck"));
+      return {
+        type: "factCheckArticle",
         data: { ...article, sourceUrl: event.linkUrl },
       };
     }
@@ -230,8 +312,8 @@ async function getDataPrompt(
         page = await getArticleFromTab(tabId);
       }
 
-      if (page === null || page.error) {
-        throw new Error(chrome.i18n.getMessage("errorPage"));
+      if (!page || page.error) {
+        throw new Error(page?.error || chrome.i18n.getMessage("errorPage"));
       }
 
       sendTabMessageTitle(tabId, {
@@ -246,6 +328,44 @@ async function getDataPrompt(
 
       return {
         type: "page",
+        data: { ...page, sourceUrl: event.pageUrl },
+      };
+    }
+    case "verifyPage": {
+      if (!event.pageUrl)
+        throw new Error(chrome.i18n.getMessage("errorPromptPage"));
+
+      sendTabMessageTitle(tabId, {
+        title: event.pageUrl,
+        subtitle: chrome.i18n.getMessage("menuVerifyPage"),
+        isLink: true,
+      });
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingPage"));
+      factCheckLog("article.extraction.started", {
+        mode: "page",
+        sourceDomain: getUrlDomain(event.pageUrl),
+      });
+
+      let page = await getArticle(event.pageUrl, controller);
+      if (page?.code === ARTICLE_PROTECTED_CODE) {
+        factCheckLog("article.extraction.fallback", { reason: ARTICLE_PROTECTED_CODE });
+        sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingCurrentTab"));
+        page = await getArticleFromTab(tabId);
+      }
+      factCheckLog("article.extraction.completed", {
+        articleChars: page.content?.length || page.textContent?.length || 0,
+      });
+      if (!page || page.error) {
+        throw new Error(page?.error || chrome.i18n.getMessage("errorPage"));
+      }
+
+      sendTabMessageTitle(tabId, {
+        title: page.title,
+        subtitle: chrome.i18n.getMessage("menuVerifyPage"),
+      });
+      sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingFactCheck"));
+      return {
+        type: "factCheckPage",
         data: { ...page, sourceUrl: event.pageUrl },
       };
     }
@@ -385,7 +505,24 @@ function extractArticleFromPage() {
 }
 
 function sendTabMessage(tabId: number, type: string, data: any = {}) {
-  chrome.tabs.sendMessage(tabId, { type, data });
+  chrome.tabs.sendMessage(tabId, { type, data }, () => {
+    const error = chrome.runtime.lastError;
+    if (error) {
+      console.error('[MuchoTexto][message] delivery.failed', {
+        tabId,
+        type,
+        message: error.message,
+      });
+      return;
+    }
+    if (["text", "error"].includes(type)) {
+      console.log('[MuchoTexto][message] delivery.completed', {
+        tabId,
+        type,
+        textChars: data?.text?.length || data?.error?.length || 0,
+      });
+    }
+  });
 }
 
 function sendTabMessageLoading(

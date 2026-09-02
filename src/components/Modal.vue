@@ -64,6 +64,12 @@
       <div class="mt-modal-content-actions">
         <div class="mt-modal-content-actions-wrapper">
           <div class="mt-modal-content-actions-list">
+            <button
+              v-if="canFactCheck && sourceUrl && !loading"
+              type="button"
+              class="mt-modal-content-action-button"
+              @click="emit('factCheck')"
+            >{{ factCheckLabel }}</button>
             <a
               v-if="sourceUrl"
               :href="sourceUrl"
@@ -96,6 +102,7 @@ const props = defineProps<{
   subtitle: string;
   originalText: string;
   sourceUrl: string;
+  canFactCheck: boolean;
   loading: boolean;
   loadingText: string;
   info: Array<Info>;
@@ -106,6 +113,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: 'closeModal'): void;
   (event: 'submit', input: string): void;
+  (event: 'factCheck'): void;
 }>();
 
 // Data
@@ -118,6 +126,7 @@ const copiedLabel = chrome.i18n.getMessage('uiCopied');
 const showMoreLabel = chrome.i18n.getMessage('uiShowMore');
 const showLessLabel = chrome.i18n.getMessage('uiShowLess');
 const originalArticleLabel = chrome.i18n.getMessage('uiOriginalArticle');
+const factCheckLabel = chrome.i18n.getMessage('uiFactCheckArticle');
 
 // Computed
 const titleIsLink = computed(() => {
@@ -161,8 +170,6 @@ const resultItemClasses = (index: number | string) => {
 };
 
 const formatMessage = (item: Info) => {
-  if (item.info !== 'assistant') return item.text;
-
   const escapedText = item.text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -170,8 +177,18 @@ const formatMessage = (item: Info) => {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
+  if (item.info !== 'assistant') return escapedText.replace(/\n/g, '<br>');
+
   return escapedText
+    .replace(
+      /^\*\*(Calificación rápida|Quick rating): ([^*\n]+)\*\*/,
+      '<div class="mt-fact-check-rating"><span>$1</span><strong>$2</strong></div>'
+    )
     .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(
+      /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    )
     .replace(/\n/g, '<br>');
 };
 

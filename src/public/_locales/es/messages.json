@@ -17,6 +17,12 @@
   "menuPage": {
     "message": "Resumen de esta página"
   },
+  "menuVerifyLink": {
+    "message": "Verificar la veracidad del artículo"
+  },
+  "menuVerifyPage": {
+    "message": "Verificar la veracidad de esta página"
+  },
   "menuNoToken": {
     "message": "Debes de estar logeado en CHATGPT"
   },
@@ -83,6 +89,15 @@
   "uiLoadingReply": {
     "message": "Esperando respuesta"
   },
+  "uiLoadingFactCheck": {
+    "message": "Contrastando afirmaciones con fuentes externas"
+  },
+  "uiLoadingProtectedArticle": {
+    "message": "Abriendo la noticia en segundo plano para extraer el texto"
+  },
+  "uiLoadingCurrentTab": {
+    "message": "Extrayendo el texto desde la pestaña actual"
+  },
   "uiOriginalText": {
     "message": "Texto original"
   },
@@ -100,6 +115,9 @@
   },
   "uiOriginalArticle": {
     "message": "Ir a la noticia original"
+  },
+  "uiFactCheckArticle": {
+    "message": "Verificar artículo"
   },
   "uiInstruction": {
     "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción. También puedes clickar en un enlace manteniendo presionada la tecla SHIFT para mostrar directamente el resumen."

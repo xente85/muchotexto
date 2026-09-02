@@ -17,6 +17,12 @@
   "menuPage": {
     "message": "Summary of this page"
   },
+  "menuVerifyLink": {
+    "message": "Fact-check this article"
+  },
+  "menuVerifyPage": {
+    "message": "Fact-check this page"
+  },
   "promptSummarize": {
     "message": "Summarize this text: $1"
   },
@@ -80,6 +86,15 @@
   "uiLoadingReply": {
     "message": "Waiting response"
   },
+  "uiLoadingFactCheck": {
+    "message": "Checking claims against external sources"
+  },
+  "uiLoadingProtectedArticle": {
+    "message": "Opening the article in the background to extract its text"
+  },
+  "uiLoadingCurrentTab": {
+    "message": "Extracting text from the current tab"
+  },
   "uiOriginalText": {
     "message": "Original text"
   },
@@ -97,6 +112,9 @@
   },
   "uiOriginalArticle": {
     "message": "Open original article"
+  },
+  "uiFactCheckArticle": {
+    "message": "Fact-check article"
   },
   "uiInstruction": {
     "message": "Right-click on selected text or on a link to obtain a summary or translation. You can also click on a link while holding down the SHIFT key to directly display the summary."

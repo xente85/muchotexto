@@ -73,6 +73,119 @@ async function getResponseIA(idChat: string, prompt: string, controller: AbortCo
   }
 }
 
+async function getFactCheck(idChat: string, article: any, controller: AbortController) {
+  const startedAt = Date.now();
+  let sourceDomain = 'unknown';
+  try {
+    sourceDomain = new URL(article?.sourceUrl).hostname;
+  } catch {
+    // La URL se valida en el servidor; este valor solo se usa para diagnóstico.
+  }
+  console.log('[MuchoTexto][fact-check] request.started', {
+    articleChars: article?.content?.length || article?.textContent?.length || 0,
+    sourceDomain,
+  });
+  try {
+    const response = await fetch(url + "fact-check", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idChat,
+        article,
+        locale: chrome.i18n.getUILanguage(),
+      }),
+      signal: controller.signal,
+    });
+
+    const result = await response.json();
+    console.log('[MuchoTexto][fact-check] response.received', {
+      durationMs: Date.now() - startedAt,
+      status: response.status,
+      ok: response.ok,
+      hasError: Boolean(result.error),
+    });
+    if (!response.ok || result.error) {
+      throw new Error(result.error || `Error HTTP ${response.status}`);
+    }
+    if (response.status !== 202 || !result.jobId) {
+      throw new Error('El servidor no devolvió un identificador de verificación.');
+    }
+
+    console.log('[MuchoTexto][fact-check] job.accepted', { jobId: result.jobId });
+    return await waitForFactCheck(result.jobId, controller, startedAt);
+  } catch (err) {
+    console.error('[MuchoTexto][fact-check] request.failed', {
+      durationMs: Date.now() - startedAt,
+      aborted: controller.signal.aborted,
+      message: err instanceof Error ? err.message : String(err),
+    });
+    if (err instanceof Error) throw err;
+    throw new Error(`Error: ${err}`);
+  }
+}
+
+function waitWithAbort(ms: number, signal: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timeout);
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+function resetServiceWorkerIdleTimer() {
+  return new Promise<void>((resolve) => {
+    chrome.runtime.getPlatformInfo(() => resolve());
+  });
+}
+
+async function waitForFactCheck(jobId: string, controller: AbortController, startedAt: number) {
+  const timeoutMs = 3 * 60 * 1000;
+  let pollCount = 0;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    await waitWithAbort(1500, controller.signal);
+    await resetServiceWorkerIdleTimer();
+    pollCount += 1;
+
+    const response = await fetch(url + `fact-check/${encodeURIComponent(jobId)}`, {
+      signal: controller.signal,
+    });
+    const result = await response.json();
+
+    if (response.status === 202) {
+      if (pollCount === 1 || pollCount % 5 === 0) {
+        console.log('[MuchoTexto][fact-check] job.pending', {
+          jobId,
+          pollCount,
+          elapsedMs: Date.now() - startedAt,
+        });
+      }
+      continue;
+    }
+
+    console.log('[MuchoTexto][fact-check] job.finished', {
+      jobId,
+      status: response.status,
+      pollCount,
+      elapsedMs: Date.now() - startedAt,
+    });
+    if (!response.ok || result.error) {
+      throw new Error(result.error || `Error HTTP ${response.status}`);
+    }
+    return result;
+  }
+
+  throw new Error('La verificación ha superado el tiempo máximo de espera.');
+}
+
 async function getResponseIATab(tabIdActive: number, idChat: string, prompt: string, controller: AbortController) {
   return new Promise((resolve, reject) => {
     // Buscar todas las pestañas abiertas con chat.openai.com
@@ -229,4 +342,4 @@ function sendMessageToChatGPT(message: string) {
   */
 }
 
-export { sleep, isHyperlink, getArticle, getResponseIA, getResponseIATab, getNewIdChat };
+export { sleep, isHyperlink, getArticle, getResponseIA, getFactCheck, getResponseIATab, getNewIdChat };

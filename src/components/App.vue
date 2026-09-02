@@ -6,12 +6,14 @@
     :subtitle="subtitle"
     :originalText="originalText"
     :sourceUrl="sourceUrl"
+    :canFactCheck="canFactCheck"
     :loading="loading"
     :loadingText="loadingText"
     :info="modalInfo"
     :isError="isError"
     @closeModal="closeModal"
     @submit="sendDataToApi"
+    @factCheck="startFactCheck"
   />
 </template>
 
@@ -31,6 +33,7 @@ const title = ref('');
 const subtitle = ref('');
 const originalText = ref('');
 const sourceUrl = ref('');
+const canFactCheck = ref(false);
 const loading = ref(false);
 const loadingText = ref('');
 const modalInfo = ref<Array<Info>>([]);
@@ -85,14 +88,25 @@ const sendDataToApi = (inputValue: string) => {
   chrome.runtime.sendMessage({ action: 'reply', idChat: idChat.value, prompt: inputValue });
 };
 
+const startFactCheck = () => {
+  if (!sourceUrl.value) return;
+  canFactCheck.value = false;
+  chrome.runtime.sendMessage({ action: 'factCheck', sourceUrl: sourceUrl.value });
+};
+
 chrome.runtime.onMessage.addListener(async (request) => {
   const { type, data } = request;
+  console.log('[MuchoTexto][modal] message.received', {
+    type,
+    textChars: data?.text?.length || data?.error?.length || 0,
+  });
 
   if (type === 'title') {
     title.value = data.title;
     subtitle.value = data.subtitle;
     originalText.value = data.originalText || '';
     sourceUrl.value = '';
+    canFactCheck.value = false;
     return;
   }
 
@@ -109,6 +123,7 @@ chrome.runtime.onMessage.addListener(async (request) => {
   if (type === 'actions') {
     idChat.value = data.data.idChat;
     sourceUrl.value = data.data.sourceUrl || '';
+    canFactCheck.value = ["article", "page"].includes(data.type);
     return;
   }
 

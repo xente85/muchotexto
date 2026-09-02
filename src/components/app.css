@@ -268,6 +268,21 @@
               font-weight: bold;
             }
           }
+
+          .mt-modal-content-action-button {
+            border: 0;
+            border-radius: 5px;
+            padding: 9px 12px;
+            background-color: var(--mt-font-color-secondary);
+            color: white;
+            cursor: pointer;
+            font-family: var(--mt-font-family);
+            font-size: 0.9em;
+
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.8);
+            }
+          }
         }
       }
 
@@ -313,6 +328,24 @@
           display: inline-block;
           vertical-align: middle;
         }
+      }
+    }
+
+    .mt-fact-check-rating {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 6px;
+      background-color: rgba(0, 0, 0, 0.04);
+
+      span {
+        font-size: 0.82em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
       }
     }
   }
