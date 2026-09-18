@@ -4,7 +4,7 @@ import { prompts } from "./utils/prompt";
 import { getArticle, getResponseIA, getFactCheck, getResponseIATab, getNewIdChat } from "./utils/utils";
 
 const idChat = "66eff5a5-9c50-800e-a2a8-93d5d54ac170";
-const ARTICLE_PROTECTED_CODE = "ARTICLE_PROTECTED";
+const ARTICLE_BROWSER_FALLBACK_CODES = ["ARTICLE_PROTECTED", "ARTICLE_BROWSER_REQUIRED"];
 
 function factCheckLog(event: string, details: any = {}) {
   console.log(`[MuchoTexto][fact-check] ${event}`, details);
@@ -193,7 +193,7 @@ async function getDataPrompt(
 
       let article = await getArticle(event.linkUrl, controller);
 
-      if (article?.code === ARTICLE_PROTECTED_CODE) {
+      if (ARTICLE_BROWSER_FALLBACK_CODES.includes(article?.code)) {
         sendTabMessageLoading(tabId, "Abriendo la noticia en segundo plano para extraer el texto...");
         article = await getArticleFromBackgroundTab(event.linkUrl);
       }
@@ -235,8 +235,8 @@ async function getDataPrompt(
       });
 
       let article = await getArticle(event.linkUrl, controller);
-      if (article?.code === ARTICLE_PROTECTED_CODE) {
-        factCheckLog("article.extraction.fallback", { reason: ARTICLE_PROTECTED_CODE });
+      if (ARTICLE_BROWSER_FALLBACK_CODES.includes(article?.code)) {
+        factCheckLog("article.extraction.fallback", { reason: article.code });
         sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingProtectedArticle"));
         article = await getArticleFromBackgroundTab(event.linkUrl);
       }
@@ -307,7 +307,7 @@ async function getDataPrompt(
 
       let page = await getArticle(event.pageUrl, controller);
 
-      if (page?.code === ARTICLE_PROTECTED_CODE) {
+      if (ARTICLE_BROWSER_FALLBACK_CODES.includes(page?.code)) {
         sendTabMessageLoading(tabId, "Extrayendo el texto desde la pestaña actual...");
         page = await getArticleFromTab(tabId);
       }
@@ -347,8 +347,8 @@ async function getDataPrompt(
       });
 
       let page = await getArticle(event.pageUrl, controller);
-      if (page?.code === ARTICLE_PROTECTED_CODE) {
-        factCheckLog("article.extraction.fallback", { reason: ARTICLE_PROTECTED_CODE });
+      if (ARTICLE_BROWSER_FALLBACK_CODES.includes(page?.code)) {
+        factCheckLog("article.extraction.fallback", { reason: page.code });
         sendTabMessageLoading(tabId, chrome.i18n.getMessage("uiLoadingCurrentTab"));
         page = await getArticleFromTab(tabId);
       }
