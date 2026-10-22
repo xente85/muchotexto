@@ -18,10 +18,10 @@
     "message": "Summary of this page"
   },
   "menuVerifyLink": {
-    "message": "Fact-check this article"
+    "message": "Review evidence for this article"
   },
   "menuVerifyPage": {
-    "message": "Fact-check this page"
+    "message": "Review evidence for this page"
   },
   "promptSummarize": {
     "message": "Summarize this text: $1"
@@ -114,7 +114,7 @@
     "message": "Open original article"
   },
   "uiFactCheckArticle": {
-    "message": "Fact-check article"
+    "message": "Review evidence"
   },
   "uiInstruction": {
     "message": "Right-click on selected text or on a link to obtain a summary or translation. You can also click on a link while holding down the SHIFT key to directly display the summary."

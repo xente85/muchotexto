@@ -491,6 +491,11 @@ function extractArticleFromPage() {
     ""
   );
   const content = [description, structuredBody || visibleBody].filter(Boolean).join("\n\n");
+  const publishedAt =
+    getMetaContent('meta[property="article:published_time"]') ||
+    getMetaContent('meta[name="date"]') ||
+    document.querySelector("time[datetime]")?.getAttribute("datetime") ||
+    "";
 
   return {
     title,
@@ -501,6 +506,7 @@ function extractArticleFromPage() {
     excerpt: description,
     length: content.length,
     url: location.href,
+    publishedAt,
   };
 }
 

@@ -18,10 +18,10 @@
     "message": "Resumen de esta página"
   },
   "menuVerifyLink": {
-    "message": "Verificar la veracidad del artículo"
+    "message": "Analizar evidencias del artículo"
   },
   "menuVerifyPage": {
-    "message": "Verificar la veracidad de esta página"
+    "message": "Analizar evidencias de esta página"
   },
   "menuNoToken": {
     "message": "Debes de estar logeado en CHATGPT"
@@ -117,7 +117,7 @@
     "message": "Ir a la noticia original"
   },
   "uiFactCheckArticle": {
-    "message": "Verificar artículo"
+    "message": "Analizar evidencias"
   },
   "uiInstruction": {
     "message": "Click con botón derecho sobre el texto seleccionado o sobre un enlace para obtener un resumen o traducción. También puedes clickar en un enlace manteniendo presionada la tecla SHIFT para mostrar directamente el resumen."
